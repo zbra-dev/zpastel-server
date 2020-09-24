@@ -1,12 +1,17 @@
 ﻿namespace ZPastel.Model
 {
-    public class Pastel : OrderItem
+    public class Pastel
     {
-        public string Flavor { get; }
+        public long Id { get; set; }
+        public long PasteleiroId { get; set; }
+        public bool IsAvailable { get; set; }
+        public string Ingdredients { get; }
+        public decimal Price { get; }
 
-        public Pastel(string flavor, decimal price) : base(price)
+        public Pastel(string ingredients, decimal price)
         {
-            Flavor = flavor;
+            Ingdredients = ingredients;
+            Price = price;
         }
     }
 }

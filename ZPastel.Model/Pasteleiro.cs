@@ -1,10 +1,11 @@
 ﻿namespace ZPastel.Model
 {
-    public class Drink : OrderItem
+    public class Pasteleiro
     {
+        public long Id { get; set; }
         public string Name { get; set; }
 
-        public Drink(string name, decimal price) : base(price)
+        public Pasteleiro(string name)
         {
             Name = name;
         }
