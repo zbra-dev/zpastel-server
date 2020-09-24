@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZPastel.Service.Tests", "ZP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZPastel.API", "ZPastel.API\ZPastel.API.csproj", "{F2308363-A40D-454B-8622-6EAA9B02ACFF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZPastel.Persistence", "ZPastel.Persistence\ZPastel.Persistence.csproj", "{3C2D4105-03F1-4D30-9751-D53CBCD5CF00}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{F2308363-A40D-454B-8622-6EAA9B02ACFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F2308363-A40D-454B-8622-6EAA9B02ACFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F2308363-A40D-454B-8622-6EAA9B02ACFF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C2D4105-03F1-4D30-9751-D53CBCD5CF00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C2D4105-03F1-4D30-9751-D53CBCD5CF00}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C2D4105-03F1-4D30-9751-D53CBCD5CF00}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C2D4105-03F1-4D30-9751-D53CBCD5CF00}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
