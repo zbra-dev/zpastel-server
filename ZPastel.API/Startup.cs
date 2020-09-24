@@ -1,8 +1,12 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using System;
+using ZPastel.Persistence;
 
 namespace ZPastel.API
 {
@@ -19,10 +23,15 @@ namespace ZPastel.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            services.AddDbContext<DataContext>(options =>
+            {
+                options.UseSqlServer(Configuration.GetConnectionString("DatabaseConnection"));
+            }, ServiceLifetime.Scoped);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
             {
@@ -39,6 +48,34 @@ namespace ZPastel.API
             {
                 endpoints.MapControllers();
             });
+
+            InitDatabase(serviceProvider);
+        }
+
+        private void InitDatabase(IServiceProvider serviceProvider)
+        {
+            using var scope = serviceProvider.CreateScope();
+            var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+            try
+            {
+                logger.LogInformation("Initializing Database...");
+
+                logger.LogInformation("Executing Database Migration...");
+                var context = scope.ServiceProvider.GetRequiredService<DataContext>();
+
+                if (!context.Database.IsInMemory() && !context.Database.IsSqlite())
+                {
+                    context.Database.Migrate();
+                }
+
+                context.Database.SetCommandTimeout(TimeSpan.FromMinutes(5));
+                logger.LogInformation("Done initializing Database");
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "An error occurred while migrating or initializing the database.");
+                throw;
+            }
         }
     }
 }
