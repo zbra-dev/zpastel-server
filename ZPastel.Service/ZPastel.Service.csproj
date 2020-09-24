@@ -8,9 +8,4 @@
     <ProjectReference Include="..\ZPastel.Model\ZPastel.Model.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Contracts\" />
-    <Folder Include="Impl\" />
-  </ItemGroup>
-
 </Project>
