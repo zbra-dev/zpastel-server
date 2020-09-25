@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using ZPastel.Model;
 using ZPastel.Persistence;
-using ZPastel.Persistence.Model;
 
 namespace ZPastel.Test.DbSeed.DataSeed
 {
@@ -23,8 +23,8 @@ namespace ZPastel.Test.DbSeed.DataSeed
 
         public void Seed()
         {
-            SeedEntities<PastelEntity>(PastelDataFilePath);
-            SeedEntities<OrderEntity>(OrderDataFilePath);
+            SeedEntities<Pastel>(PastelDataFilePath);
+            SeedEntities<Order>(OrderDataFilePath);
 
             dataContext.SaveChanges();
         }

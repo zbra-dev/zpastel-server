@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using ZPastel.Persistence.Configuration;
 
 namespace ZPastel.Persistence
 {
@@ -10,6 +11,14 @@ namespace ZPastel.Persistence
         public DataContext(DbContextOptions<DataContext> options)
            : base(options)
         {
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ApplyConfiguration(new OrderConfiguration());
+            modelBuilder.ApplyConfiguration(new OrderItemConfiguration());
+            modelBuilder.ApplyConfiguration(new PastelConfiguration());
+            modelBuilder.ApplyConfiguration(new PastelConfiguration());
         }
 
         public IEnumerable<T> AddRange<T>(IEnumerable<T> instances) where T : class
