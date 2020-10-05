@@ -21,14 +21,14 @@ namespace ZPastel.Persistence
             modelBuilder.ApplyConfiguration(new PasteleiroConfiguration());
         }
 
-        public IEnumerable<T> AddRange<T>(IEnumerable<T> instances) where T : class
+        public void AddRange<T>(IEnumerable<T> instances) where T : class
         {
-            return new List<T>();
+            base.AddRange(instances);
         }
 
         public Task<int> SaveChanges(bool acceptAllChangesOnSuccess = true, CancellationToken cancellationToken = default)
         {
-            return Task.FromResult(1);
+           return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
         }
     }
 }

@@ -7,7 +7,7 @@ namespace ZPastel.Model
     {
         public long Id { get; set; }
         public DateTime Date { get; }
-        public double TotalPrice { get; set; }
+        public decimal TotalPrice { get; set; }
         public IList<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
     }
 }

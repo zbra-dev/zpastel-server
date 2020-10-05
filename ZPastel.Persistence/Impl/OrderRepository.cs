@@ -1,4 +1,4 @@
-﻿namespace ZPastel.Persistence.Repository
+﻿namespace ZPastel.Persistence.Impl
 {
     public class OrderRepository
     {

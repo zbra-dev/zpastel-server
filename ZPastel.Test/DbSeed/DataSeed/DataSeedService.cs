@@ -9,7 +9,7 @@ namespace ZPastel.Test.DbSeed.DataSeed
     {
 
         private const string PastelDataFilePath = "./DbSeed/JSON/PastelEntities.json";
-        private const string OrderDataFilePath = "./DbSeed/JSON/OrderEntities.json";
+        private const string PasteleiroDataFilePath = "./DbSeed/JSON/PasteleiroEntities.json";
 
         private readonly IDataContext dataContext;
 
@@ -23,10 +23,8 @@ namespace ZPastel.Test.DbSeed.DataSeed
 
         public void Seed()
         {
+            SeedEntities<Pasteleiro>(PasteleiroDataFilePath);
             SeedEntities<Pastel>(PastelDataFilePath);
-            SeedEntities<Order>(OrderDataFilePath);
-
-            dataContext.SaveChanges();
         }
 
         private void SeedEntities<T>(string filePath) where T : class

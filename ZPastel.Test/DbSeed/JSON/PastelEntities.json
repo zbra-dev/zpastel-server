@@ -1,4 +1,16 @@
 [
   {
+    "Id": 1,
+    "PasteleiroId": 1,
+    "IsAvailable": true,
+    "Ingredients": "4 Queijos",
+    "Price": 5.00
+  },
+  {
+    "Id": 2,
+    "PasteleiroId": 1,
+    "IsAvailable": true,
+    "Ingredients": "Carne",
+    "Price": 4.50
   }
 ]

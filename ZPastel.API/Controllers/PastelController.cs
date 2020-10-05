@@ -1,10 +1,13 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using ZPastel.API.Converters;
 using ZPastel.API.Resources;
 using ZPastel.Model;
+using ZPastel.Service.Contract;
 
 namespace ZPastel.API.Controllers
 {
@@ -12,11 +15,18 @@ namespace ZPastel.API.Controllers
     [Route("api/pasteis/")]
     public class PastelController : ControllerBase
     {
-        private readonly ILogger<PastelController> _logger;
+        private readonly ILogger<PastelController> logger;
+        private readonly IPastelService pastelService;
+        private readonly PastelConverter pastelConverter;
 
-        public PastelController(ILogger<PastelController> logger)
+        public PastelController(
+            ILogger<PastelController> logger, 
+            IPastelService pastelService,
+            PastelConverter pastelConverter)
         {
-            _logger = logger;
+            this.logger = logger;
+            this.pastelService = pastelService;
+            this.pastelConverter = pastelConverter;
         }
 
         [HttpGet(Name = nameof(GetPasteis))]
@@ -24,21 +34,11 @@ namespace ZPastel.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IReadOnlyCollection<PastelResource>> GetPasteis()
         {
-            return new[] 
-            { 
-                new PastelResource
-                { 
-                    Id = 1,
-                    Ingdredients = "4 Queijos",
-                    Price = 5
-                },
-                new PastelResource
-                {
-                    Id = 2,
-                    Ingdredients = "Carne",
-                    Price = 4.50m
-                }
-            };
+            var pasteis =  await pastelService.FindAll();
+
+            return pasteis
+                .Select(p => pastelConverter.ConvertToResource(p))
+                .ToList();
         }
     }
 }

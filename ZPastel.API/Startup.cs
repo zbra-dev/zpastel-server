@@ -6,7 +6,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
+using ZPastel.API.Converters;
 using ZPastel.Persistence;
+using ZPastel.Persistence.Contract;
+using ZPastel.Persistence.Impl;
+using ZPastel.Service.Contract;
+using ZPastel.Service.Impl;
 
 namespace ZPastel.API
 {
@@ -23,6 +28,10 @@ namespace ZPastel.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            services.AddTransient<IPastelService, PastelService>();
+            services.AddTransient<IPastelRepository, PastelRepository>();
+            services.AddTransient<PastelConverter, PastelConverter>();
 
             services.AddDbContext<DataContext>(options =>
             {
