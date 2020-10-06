@@ -13,11 +13,10 @@ namespace ZPastel.Persistence.Configuration
             builder.HasKey(p => p.Id);
 
             builder.Property(p => p.Id).HasColumnName("Id");
-            builder.Property(p => p.PasteleiroId).HasColumnName("PasteleiroId");
             builder.Property(p => p.Ingredients).HasColumnName("Ingredients");
             builder.Property(p => p.IsAvailable).HasColumnName("IsAvailable");
             builder.Property(p => p.Price).HasColumnName("Price");
-            builder.HasOne(p => p.Pasteleiro).WithOne().HasForeignKey<Pastel>(p => p.PasteleiroId);
+            builder.HasOne(p => p.Pasteleiro).WithMany().HasForeignKey(p => p.PasteleiroId);
         }
     }
 }
