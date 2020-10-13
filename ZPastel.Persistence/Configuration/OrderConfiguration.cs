@@ -14,8 +14,15 @@ namespace ZPastel.Persistence.Configuration
 
             builder.Property(o => o.Id).HasColumnName("Id");
             builder.Property(o => o.TotalPrice).HasColumnName("TotalPrice");
-            builder.Property(o => o.Date).HasColumnName("Data");
+            builder.Property(o => o.CreatedOn).HasColumnName("CreatedOn");
+            builder.Property(o => o.CreatedByUsername).HasColumnName("CreatedByUsername");
+            builder.Property(o => o.CreatedById).HasColumnName("CreatedById");
+            builder.Property(o => o.CreatedOn).HasColumnName("CreatedOn");
+            builder.Property(o => o.LastModifiedById).HasColumnName("LastModifiedById");
+            builder.Property(o => o.LastModifiedOn).HasColumnName("LastModifiedOn");
+
             builder.HasMany(o => o.OrderItems).WithOne(o => o.Order);
+            builder.HasOne(o => o.User).WithMany().HasForeignKey(p => p.CreatedById);
         }
     }
 }

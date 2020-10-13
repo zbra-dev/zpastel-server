@@ -30,6 +30,9 @@
     <None Update="DbSeed\JSON\PastelEntities.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="DbSeed\JSON\UserEntities.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

@@ -10,10 +10,13 @@ namespace ZPastel.API.Converters
             return new PastelResource
             {
                 Id = pastel.Id,
-                Ingdredients = pastel.Ingredients,
-                IsAvailable = pastel.IsAvailable,
-                PasteleiroId = pastel.PasteleiroId,
-                Price = pastel.Price
+                Ingredients = pastel.Ingredients,
+                Price = pastel.Price,
+                CreatedById = pastel.CreatedById,
+                CreatedOn = pastel.CreatedOn,
+                LastModifiedById = pastel.LastModifiedById,
+                LastModifiedOn = pastel.LastModifiedOn,
+                Name = pastel.Name
             };
         }
     }

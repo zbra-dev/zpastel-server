@@ -8,10 +8,10 @@ using Microsoft.Extensions.Logging;
 using System;
 using ZPastel.API.Converters;
 using ZPastel.Persistence;
-using ZPastel.Persistence.Contract;
 using ZPastel.Persistence.Impl;
 using ZPastel.Service.Contract;
 using ZPastel.Service.Impl;
+using ZPastel.Service.Repositories;
 
 namespace ZPastel.API
 {

@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ZPastel.Model\ZPastel.Model.csproj" />
+    <ProjectReference Include="..\ZPastel.Service\ZPastel.Service.csproj" />
   </ItemGroup>
 
 </Project>

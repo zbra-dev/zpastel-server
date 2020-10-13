@@ -19,6 +19,7 @@ namespace ZPastel.Persistence
             modelBuilder.ApplyConfiguration(new OrderItemConfiguration());
             modelBuilder.ApplyConfiguration(new PastelConfiguration());
             modelBuilder.ApplyConfiguration(new PasteleiroConfiguration());
+            modelBuilder.ApplyConfiguration(new UserConfiguration());
         }
 
         public void AddRange<T>(IEnumerable<T> instances) where T : class
