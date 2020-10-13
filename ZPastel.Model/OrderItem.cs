@@ -5,6 +5,7 @@ namespace ZPastel.Model
     public class OrderItem
     {
         public long Id { get; set; }
+        public string Name { get; set; }
         public long OrderId { get; set; }
         public long PastelId { get; set; }
         public Order Order { get; set; }
