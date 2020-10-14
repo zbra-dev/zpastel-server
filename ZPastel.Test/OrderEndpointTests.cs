@@ -118,7 +118,7 @@ namespace ZPastel.Test
         }
 
         [Fact]
-        public async Task GetOrderById_WithInvalidId_ShouldThrowException()
+        public async Task GetOrderById_WithInvalidId_ShouldThrowNotFoundException()
         {
             var response = await client.GetAsync("api/orders/0");
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
