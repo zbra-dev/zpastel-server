@@ -7,5 +7,6 @@ namespace ZPastel.Service.Repositories
     public interface IPastelRepository
     {
         Task<IReadOnlyList<Pastel>> FindAll();
+        Task<Pastel> FindById(long id);
     }
 }

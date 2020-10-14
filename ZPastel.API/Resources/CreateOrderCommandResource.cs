@@ -6,6 +6,6 @@ namespace ZPastel.API.Resources
     {
         public long CreatedById { get; set; }
         public string CreatedByUserName { get; set; }
-        public IList<OrderItemResource> OrderItemResources { get; set; } = new List<OrderItemResource>();
+        public IList<CreateOrderItemResource> OrderItemResources { get; set; } = new List<CreateOrderItemResource>();
     }
 }

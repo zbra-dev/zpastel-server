@@ -6,6 +6,6 @@ namespace ZPastel.Model
     {
         public long CreatedById { get; set; }
         public string CreatedByUserName { get; set; }
-        public IList<OrderItem> OrderItemResources { get; set; } = new List<OrderItem>();
+        public IList<CreateOrderItem> OrderItems { get; set; } = new List<CreateOrderItem>();
     }
 }

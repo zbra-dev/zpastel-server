@@ -4,28 +4,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
 using ZPastel.API.Resources;
+using ZPastel.Test.Builders;
 using ZPastel.Tests;
 
 namespace ZPastel.Test
 {
     public class OrderEndpointTests
     {
-        private readonly HttpClient client;
-
+        private readonly CustomWebApplicationFactory factory;
         public OrderEndpointTests()
         {
-            var factory = new CustomWebApplicationFactory();
-
-            client = factory
-                .CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
+            factory = new CustomWebApplicationFactory();
         }
 
         [Fact]
         public async Task GetOrders_AllOrder_ShouldReturnAllOrders()
         {
+            var client = GetClient();
             var response = await client.GetAsync("api/orders");
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
@@ -87,9 +87,15 @@ namespace ZPastel.Test
             firstOrderItemFromSecondOrder.Quantity.Should().Be(4);
         }
 
+        private HttpClient GetClient()
+        {
+            return factory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
+        }
+
         [Fact]
         public async Task GetOrderById_WithValidId_ShouldReturnCorrectOrder()
         {
+            var client = GetClient();
             var response = await client.GetAsync("api/orders/2");
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
@@ -120,8 +126,39 @@ namespace ZPastel.Test
         [Fact]
         public async Task GetOrderById_WithInvalidId_ShouldThrowNotFoundException()
         {
+            var client = GetClient();
             var response = await client.GetAsync("api/orders/0");
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        }
+
+        [Fact]
+        public async Task CreateOrder_WithInput_ShouldCreateOrder()
+        {
+            var body = new CreateOrderCommandResourceBuilder()
+                .WithDefaultValues()
+                .Build();
+
+            var client = GetClient();
+            var getResponse = await client.GetAsync("api/orders");
+            getResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var ordersContent = await getResponse.Content.ReadAsStringAsync();
+            var orders = Newtonsoft.Json.JsonConvert.DeserializeObject<IReadOnlyCollection<OrderResource>>(ordersContent);
+
+            orders.Count.Should().Be(2);
+
+            var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
+
+            var postResponse = await client.PostAsync("api/orders/create", content);
+            postResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
+
+            getResponse = await client.GetAsync("api/orders");
+            getResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            ordersContent = await getResponse.Content.ReadAsStringAsync();
+            orders = Newtonsoft.Json.JsonConvert.DeserializeObject<IReadOnlyCollection<OrderResource>>(ordersContent);
+
+            orders.Count.Should().Be(3);
         }
 
     }

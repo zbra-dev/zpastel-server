@@ -13,19 +13,16 @@ namespace ZPastel.Test
 {
     public class PastelEndpointTests
     {
-        private readonly HttpClient client;
-
+        private readonly CustomWebApplicationFactory factory;
         public PastelEndpointTests()
         {
-            var factory = new CustomWebApplicationFactory();
-
-            client = factory
-                .CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
+            factory = new CustomWebApplicationFactory();
         }
 
         [Fact]
         public async Task GetPasteis_AllFlavors_ShouldReturnAllPasteis()
         {
+            var client = GetClient();
             var response = await client.GetAsync("api/pasteis");
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
@@ -51,6 +48,11 @@ namespace ZPastel.Test
             secondPastel.Price.Should().Be(4.50m);
             secondPastel.CreatedById.Should().Be(1);
             secondPastel.LastModifiedById.Should().Be(1);
+        }
+
+        private HttpClient GetClient()
+        {
+            return factory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
         }
     }
 }

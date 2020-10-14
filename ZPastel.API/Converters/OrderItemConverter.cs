@@ -9,16 +9,16 @@ namespace ZPastel.API.Converters
         {
             return new OrderItemResource
             {
-                CreatedById = orderItem.CreatedById,
-                CreatedOn = orderItem.CreatedOn,
                 Id = orderItem.Id,
+                CreatedById = orderItem.CreatedById,
                 Ingredients = orderItem.Ingredients,
-                LastModifiedById = orderItem.LastModifiedById,
-                LastModifiedOn = orderItem.LastModifiedOn,
-                OrderId = orderItem.OrderId,
                 PastelId = orderItem.PastelId,
                 Price = orderItem.Price,
-                Quantity = orderItem.Quantity
+                Quantity = orderItem.Quantity,
+                LastModifiedById = orderItem.LastModifiedById,
+                CreatedOn = orderItem.CreatedOn,
+                LastModifiedOn = orderItem.LastModifiedOn,
+                OrderId = orderItem.OrderId
             };
         }
     }

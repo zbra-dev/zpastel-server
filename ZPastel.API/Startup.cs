@@ -13,6 +13,7 @@ using ZPastel.Persistence.Impl;
 using ZPastel.Service.Contract;
 using ZPastel.Service.Impl;
 using ZPastel.Service.Repositories;
+using ZPastel.Service.Validators;
 
 namespace ZPastel.API
 {
@@ -42,6 +43,9 @@ namespace ZPastel.API
             services.AddTransient<CreateOrderCommandConverter>();
             services.AddTransient<OrderConverter>();
             services.AddTransient<OrderItemConverter>();
+            services.AddTransient<CreateOrderItemResourceConverter>();
+            services.AddTransient<CreateOrderItemValidator>();
+            services.AddTransient<CreateOrderCommandValidator>();
 
             services.AddDbContext<DataContext>(options =>
             {
