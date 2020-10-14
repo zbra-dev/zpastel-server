@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using ZPastel.Model;
 using ZPastel.Service.Contract;
+using ZPastel.Service.Exceptions;
 using ZPastel.Service.Repositories;
 
 namespace ZPastel.Service.Impl
@@ -27,7 +28,14 @@ namespace ZPastel.Service.Impl
 
         public async Task<Order> FindById(long id)
         {
-            return await orderRepository.FindById(id);
+            var order = await orderRepository.FindById(id);
+
+            if (order == null)
+            {
+                throw new NotFoundException<Order>(id.ToString(), nameof(Order.Id));
+            }
+
+            return order;
         }
     }
 }

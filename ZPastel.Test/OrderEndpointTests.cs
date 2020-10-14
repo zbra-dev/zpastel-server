@@ -86,5 +86,43 @@ namespace ZPastel.Test
             firstOrderItemFromSecondOrder.Price.Should().Be(4.50m);
             firstOrderItemFromSecondOrder.Quantity.Should().Be(4);
         }
+
+        [Fact]
+        public async Task GetOrderById_WithValidId_ShouldReturnCorrectOrder()
+        {
+            var response = await client.GetAsync("api/orders/2");
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var ordersContent = await response.Content.ReadAsStringAsync();
+            var order = Newtonsoft.Json.JsonConvert.DeserializeObject<OrderResource>(ordersContent);
+
+            order.Should().NotBeNull();
+            order.Id.Should().Be(2);
+            order.CreatedById.Should().Be(1);
+            order.CreatedByUsername.Should().Be("Tester");
+            order.LastModifiedById.Should().Be(1);
+            order.TotalPrice.Should().Be(18);
+
+            var orderItems = order.OrderItems;
+            orderItems.Count.Should().Be(1);
+
+            var firstOrderItemFromSecondOrder = order.OrderItems.First();
+            firstOrderItemFromSecondOrder.Id.Should().Be(3);
+            firstOrderItemFromSecondOrder.CreatedById.Should().Be(1);
+            firstOrderItemFromSecondOrder.Ingredients.Should().Be("Carne Moida");
+            firstOrderItemFromSecondOrder.LastModifiedById.Should().Be(1);
+            firstOrderItemFromSecondOrder.OrderId.Should().Be(1);
+            firstOrderItemFromSecondOrder.PastelId.Should().Be(2);
+            firstOrderItemFromSecondOrder.Price.Should().Be(4.50m);
+            firstOrderItemFromSecondOrder.Quantity.Should().Be(4);
+        }
+
+        [Fact]
+        public async Task GetOrderById_WithInvalidId_ShouldThrowException()
+        {
+            var response = await client.GetAsync("api/orders/0");
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        }
+
     }
 }
