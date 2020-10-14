@@ -56,7 +56,7 @@ namespace ZPastel.Test
             firstOrderItemFromFirstOrder.Quantity.Should().Be(1);
 
             var secondOrderItemFromFirstOrder = firstOrder.OrderItems.Skip(1).First();
-            secondOrderItemFromFirstOrder.Id.Should().Be(1);
+            secondOrderItemFromFirstOrder.Id.Should().Be(2);
             secondOrderItemFromFirstOrder.CreatedById.Should().Be(1);
             secondOrderItemFromFirstOrder.Ingredients.Should().Be("Carne Moida");
             secondOrderItemFromFirstOrder.LastModifiedById.Should().Be(1);
@@ -67,11 +67,11 @@ namespace ZPastel.Test
 
             var secondOrder = orders.Skip(1).First();
 
-            secondOrder.Id.Should().Be(1);
+            secondOrder.Id.Should().Be(2);
             secondOrder.CreatedById.Should().Be(1);
             secondOrder.CreatedByUsername.Should().Be("Tester");
             secondOrder.LastModifiedById.Should().Be(1);
-            secondOrder.TotalPrice.Should().Be(9.50m);
+            secondOrder.TotalPrice.Should().Be(18);
 
             var orderItemsFromSecondOrder = secondOrder.OrderItems;
             orderItemsFromSecondOrder.Count.Should().Be(1);
@@ -81,8 +81,8 @@ namespace ZPastel.Test
             firstOrderItemFromSecondOrder.CreatedById.Should().Be(1);
             firstOrderItemFromSecondOrder.Ingredients.Should().Be("Carne Moida");
             firstOrderItemFromSecondOrder.LastModifiedById.Should().Be(1);
-            firstOrderItemFromSecondOrder.OrderId.Should().Be(2);
-            firstOrderItemFromSecondOrder.PastelId.Should().Be(1);
+            firstOrderItemFromSecondOrder.OrderId.Should().Be(1);
+            firstOrderItemFromSecondOrder.PastelId.Should().Be(2);
             firstOrderItemFromSecondOrder.Price.Should().Be(4.50m);
             firstOrderItemFromSecondOrder.Quantity.Should().Be(4);
         }

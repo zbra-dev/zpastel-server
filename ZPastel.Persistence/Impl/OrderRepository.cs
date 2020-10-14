@@ -27,6 +27,7 @@ namespace ZPastel.Persistence.Impl
         {
             return await dataContext
                 .Set<Order>()
+                .Include(o => o.OrderItems)
                 .AsNoTracking()
                 .ToListAsync();
         }
@@ -36,6 +37,7 @@ namespace ZPastel.Persistence.Impl
             return await dataContext
                 .Set<Order>()
                 .Where(o => o.Id == id)
+                .Include(o => o.OrderItems)
                 .AsNoTracking()
                 .SingleOrDefaultAsync();
         }
