@@ -17,28 +17,25 @@ namespace ZPastel.API.Controllers
         private readonly ILogger<OrderController> _logger;
         private readonly IOrderService orderService;
         private readonly OrderConverter orderConverter;
-        private readonly CreateOrderCommandConverter createOrderCommandConverter;
 
         public OrderController(
             ILogger<OrderController> logger, 
             IOrderService orderService,
-            OrderConverter orderConverter,
-            CreateOrderCommandConverter createOrderCommandConverter)
+            OrderConverter orderConverter)
         {
             _logger = logger;
             this.orderService = orderService;
             this.orderConverter = orderConverter;
-            this.createOrderCommandConverter = createOrderCommandConverter;
         }
 
         [HttpPost("create", Name = nameof(CreateOrder))]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<ActionResult> CreateOrder(CreateOrderCommandResource createOrderCommandResource)
+        public async Task<ActionResult> CreateOrder(OrderResource createOrderCommandResource)
         {
-            var createOrderCommand = createOrderCommandConverter.ConvertToModel(createOrderCommandResource);
+            var order = orderConverter.ConvertToModel(createOrderCommandResource);
 
-            await orderService.CreateOrder(createOrderCommand);
+            await orderService.CreateOrder(order);
 
             return NoContent();
         }

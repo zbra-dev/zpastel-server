@@ -13,61 +13,31 @@ namespace ZPastel.Service.Impl
     public class OrderService : IOrderService
     {
         private readonly IOrderRepository orderRepository;
-        private readonly CreateOrderCommandValidator createOrderCommandValidator;
+        private readonly OrderValidator createOrderCommandValidator;
 
-        public OrderService(IOrderRepository orderRepository, CreateOrderCommandValidator createOrderCommandValidator)
+        public OrderService(IOrderRepository orderRepository, OrderValidator createOrderCommandValidator)
         {
             this.orderRepository = orderRepository;
             this.createOrderCommandValidator = createOrderCommandValidator;
         }
 
-        public async Task CreateOrder(CreateOrderCommand createOrderCommand)
+        public async Task CreateOrder(Order order)
         {
-            await createOrderCommandValidator.Validate(createOrderCommand);
+            await createOrderCommandValidator.Validate(order);
 
-            var order = CreateOrderFromCommand(createOrderCommand);
+            var now = DateTime.Now;
+
+            order.CreatedOn = now;
+            order.LastModifiedOn = now;
+            order.LastModifiedById = order.CreatedById;
+            
+            foreach (var orderItem in order.OrderItems)
+            {
+                orderItem.CreatedOn = now;
+                orderItem.LastModifiedOn = now;
+            }
 
             await orderRepository.CreateOrder(order);
-        }
-
-        private Order CreateOrderFromCommand(CreateOrderCommand createOrderCommand)
-        {
-            var order = new Order
-            {
-                CreatedById = createOrderCommand.CreatedById,
-                CreatedByUsername = createOrderCommand.CreatedByUserName,
-                CreatedOn = DateTime.Now,
-                LastModifiedById = createOrderCommand.CreatedById,
-                LastModifiedOn = DateTime.Now,
-                TotalPrice = CalculateTotalPrice(createOrderCommand.OrderItems)
-            };
-            order.OrderItems = CreateOrderItems(createOrderCommand.OrderItems, order);
-
-            return order;
-        }
-
-        private IList<OrderItem> CreateOrderItems(IList<CreateOrderItem> createOrderItems, Order order)
-        {
-            return createOrderItems
-                .Select(c => new OrderItem
-                {
-                    Order = order,
-                    CreatedById = c.CreatedById,
-                    CreatedOn = DateTime.Now,
-                    Ingredients = c.Ingredients,
-                    LastModifiedById = c.CreatedById,
-                    LastModifiedOn = DateTime.Now,
-                    Name = c.Name,
-                    PastelId = c.PastelId,
-                    Price = c.Price,
-                    Quantity = c.Quantity
-                })
-                .ToList();
-        }
-
-        private decimal CalculateTotalPrice(IList<CreateOrderItem> orderItems)
-        {
-            return orderItems.Sum(o => o.Price * o.Quantity);
         }
 
         public async Task<IReadOnlyList<Order>> FindAll()

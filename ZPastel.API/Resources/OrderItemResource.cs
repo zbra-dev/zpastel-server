@@ -5,6 +5,7 @@ namespace ZPastel.API.Resources
     public class OrderItemResource
     {
         public long Id { get; set; }
+        public string Name { get; set; }
         public long OrderId { get; set; }
         public long PastelId { get; set; }
         public decimal Price { get; set; }

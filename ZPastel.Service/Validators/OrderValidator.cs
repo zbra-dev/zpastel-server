@@ -5,31 +5,31 @@ using ZPastel.Model;
 
 namespace ZPastel.Service.Validators
 {
-    public class CreateOrderCommandValidator : IValidator<CreateOrderCommand>
+    public class OrderValidator : IValidator<Order>
     {
-        private readonly CreateOrderItemValidator createOrderItemValidator;
+        private readonly OrderItemValidator createOrderItemValidator;
 
-        public CreateOrderCommandValidator(CreateOrderItemValidator createOrderItemValidator)
+        public OrderValidator(OrderItemValidator createOrderItemValidator)
         {
             this.createOrderItemValidator = createOrderItemValidator;
         }
-        public async Task Validate(CreateOrderCommand createOrderCommand)
+        public async Task Validate(Order order)
         {
-            if (createOrderCommand.CreatedById <= 0)
+            if (order.CreatedById <= 0)
             {
                 throw new ArgumentException("Invalid CreatedById");
             }
-            if (string.IsNullOrEmpty(createOrderCommand.CreatedByUserName))
+            if (string.IsNullOrEmpty(order.CreatedByUsername))
             {
                 throw new ArgumentException("CreatedByUserName cannot be null or empty");
             }
-            if (!createOrderCommand.OrderItems.Any())
+            if (!order.OrderItems.Any())
             {
                 throw new ArgumentException("At least one OrderItem is required");
             }
             else
             {
-                foreach (var orderItem in createOrderCommand.OrderItems)
+                foreach (var orderItem in order.OrderItems)
                 {
                     await createOrderItemValidator.Validate(orderItem);
                 }

@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -134,7 +135,7 @@ namespace ZPastel.Test
         [Fact]
         public async Task CreateOrder_WithInput_ShouldCreateOrder()
         {
-            var body = new CreateOrderCommandResourceBuilder()
+            var body = new OrderResourceBuilder()
                 .WithDefaultValues()
                 .Build();
 
@@ -159,6 +160,26 @@ namespace ZPastel.Test
             orders = Newtonsoft.Json.JsonConvert.DeserializeObject<IReadOnlyCollection<OrderResource>>(ordersContent);
 
             orders.Count.Should().Be(3);
+
+            var createdOrder = orders.Where(o => o.Id == 3).Single();
+
+            createdOrder.CreatedById.Should().Be(body.CreatedById);
+            createdOrder.CreatedByUsername.Should().Be(body.CreatedByUsername);
+            createdOrder.CreatedOn.Should().BeAfter(DateTime.MinValue);
+            createdOrder.LastModifiedById.Should().Be(body.CreatedById);
+            createdOrder.LastModifiedOn.Should().BeAfter(DateTime.MinValue);
+            createdOrder.TotalPrice.Should().Be(body.TotalPrice);
+            createdOrder.OrderItems.Count.Should().Be(body.OrderItems.Count);
+
+            var orderItemFromCreatedOrder = createdOrder.OrderItems.First();
+            var orderItemFromBody = body.OrderItems.First();
+
+            orderItemFromCreatedOrder.CreatedById.Should().Be(orderItemFromBody.CreatedById);
+            orderItemFromCreatedOrder.Ingredients.Should().Be(orderItemFromBody.Ingredients);
+            orderItemFromCreatedOrder.PastelId.Should().Be(orderItemFromBody.PastelId);
+            orderItemFromCreatedOrder.Price.Should().Be(orderItemFromBody.Price);
+            orderItemFromCreatedOrder.Quantity.Should().Be(orderItemFromBody.Quantity);
+            orderItemFromCreatedOrder.Name.Should().Be(orderItemFromBody.Name);
         }
 
     }

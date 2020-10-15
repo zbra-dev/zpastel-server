@@ -6,38 +6,38 @@ using ZPastel.Service.Exceptions;
 
 namespace ZPastel.Service.Validators
 {
-    public class CreateOrderItemValidator : IValidator<CreateOrderItem>
+    public class OrderItemValidator : IValidator<OrderItem>
     {
         private readonly IPastelRepository pastelRepository;
 
-        public CreateOrderItemValidator(IPastelRepository pastelRepository)
+        public OrderItemValidator(IPastelRepository pastelRepository)
         {
             this.pastelRepository = pastelRepository;
         }
 
-        public async Task Validate(CreateOrderItem createOrderItem)
+        public async Task Validate(OrderItem orderItem)
         {
-            if (createOrderItem.CreatedById <= 0)
+            if (orderItem.CreatedById <= 0)
             {
                 throw new ArgumentException("Invalid OrderItem CreatedById");
             }
-            if (string.IsNullOrEmpty(createOrderItem.Ingredients))
+            if (string.IsNullOrEmpty(orderItem.Ingredients))
             {
                 throw new ArgumentException("OrderItem Ingredients cannot be null or empty");
             }
-            if (string.IsNullOrEmpty(createOrderItem.Name))
+            if (string.IsNullOrEmpty(orderItem.Name))
             {
                 throw new ArgumentException("OrderItem name cannot be null or empty");
             }
-            if (createOrderItem.Quantity <= 0)
+            if (orderItem.Quantity <= 0)
             {
                 throw new ArgumentException("OrderItem Quantity must be greater than 0");
             }
 
-            var pastel = await pastelRepository.FindById(createOrderItem.PastelId);
+            var pastel = await pastelRepository.FindById(orderItem.PastelId);
             if (pastel == null)
             {
-                throw new NotFoundException<Pastel>(createOrderItem.PastelId.ToString(), nameof(createOrderItem.PastelId));
+                throw new NotFoundException<Pastel>(orderItem.PastelId.ToString(), nameof(orderItem.PastelId));
             }
         }
     }

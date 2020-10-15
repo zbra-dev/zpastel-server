@@ -13,6 +13,18 @@ namespace ZPastel.API.Converters
             this.orderItemConverter = orderItemConverter;
         }
 
+        public Order ConvertToModel(OrderResource orderResource)
+        {
+            return new Order
+            {
+                CreatedById = orderResource.CreatedById,
+                CreatedByUsername = orderResource.CreatedByUsername,
+                LastModifiedById = orderResource.LastModifiedById,
+                OrderItems = orderResource.OrderItems.Select(i => orderItemConverter.ConvertToModel(i)).ToList(),
+                TotalPrice = orderResource.TotalPrice
+            };
+        }
+
         public OrderResource ConvertToResource(Order order)
         {
             return new OrderResource

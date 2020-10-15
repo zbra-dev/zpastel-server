@@ -40,12 +40,10 @@ namespace ZPastel.API
             services.AddTransient<IPastelRepository, PastelRepository>();
             services.AddTransient<IOrderRepository, OrderRepository>();
             services.AddTransient<PastelConverter>();
-            services.AddTransient<CreateOrderCommandConverter>();
             services.AddTransient<OrderConverter>();
             services.AddTransient<OrderItemConverter>();
-            services.AddTransient<CreateOrderItemResourceConverter>();
-            services.AddTransient<CreateOrderItemValidator>();
-            services.AddTransient<CreateOrderCommandValidator>();
+            services.AddTransient<OrderItemValidator>();
+            services.AddTransient<OrderValidator>();
 
             services.AddDbContext<DataContext>(options =>
             {

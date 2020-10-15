@@ -18,9 +18,21 @@ namespace ZPastel.Persistence.Impl
 
         public async Task CreateOrder(Order order)
         {
+            SetOrderToOrderItems(order);
+
             dataContext.Add(order);
 
             await dataContext.SaveChangesAsync();
+        }
+
+        private Order SetOrderToOrderItems(Order order)
+        {
+            foreach (var orderItem in order.OrderItems)
+            {
+                orderItem.Order = order;
+            }
+
+            return order;
         }
 
         public async Task<IReadOnlyList<Order>> FindAll()
