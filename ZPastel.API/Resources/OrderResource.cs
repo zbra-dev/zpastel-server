@@ -10,8 +10,8 @@ namespace ZPastel.API.Resources
         public IList<OrderItemResource> OrderItems { get; set; } = new List<OrderItemResource>();
         public string CreatedByUsername { get; set; }
         public long CreatedById { get; set; }
-        public DateTime CreatedOn { get; set; }
+        public DateTime? CreatedOn { get; set; }
         public long LastModifiedById { get; set; }
-        public DateTime LastModifiedOn { get; set; }
+        public DateTime? LastModifiedOn { get; set; }
     }
 }
