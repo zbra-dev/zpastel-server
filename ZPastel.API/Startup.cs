@@ -7,12 +7,12 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using ZPastel.API.Converters;
+using ZPastel.Core.Repositories;
 using ZPastel.API.Filters;
 using ZPastel.Persistence;
 using ZPastel.Persistence.Impl;
 using ZPastel.Service.Contract;
 using ZPastel.Service.Impl;
-using ZPastel.Service.Repositories;
 using ZPastel.Service.Validators;
 
 namespace ZPastel.API

@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ZPastel.Core.Repositories;
 using ZPastel.Model;
 using ZPastel.Service.Contract;
 using ZPastel.Service.Exceptions;
-using ZPastel.Service.Repositories;
 using ZPastel.Service.Validators;
 
 namespace ZPastel.Service.Impl

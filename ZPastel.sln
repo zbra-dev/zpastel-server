@@ -9,11 +9,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZPastel.Service", "ZPastel.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZPastel.Service.Tests", "ZPastel.Service.Tests\ZPastel.Service.Tests.csproj", "{B19801D3-84EB-475E-9C5A-D3CA9ACD6C0F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZPastel.API", "ZPastel.API\ZPastel.API.csproj", "{F2308363-A40D-454B-8622-6EAA9B02ACFF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZPastel.API", "ZPastel.API\ZPastel.API.csproj", "{F2308363-A40D-454B-8622-6EAA9B02ACFF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZPastel.Persistence", "ZPastel.Persistence\ZPastel.Persistence.csproj", "{3C2D4105-03F1-4D30-9751-D53CBCD5CF00}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZPastel.Persistence", "ZPastel.Persistence\ZPastel.Persistence.csproj", "{3C2D4105-03F1-4D30-9751-D53CBCD5CF00}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZPastel.Test", "ZPastel.Test\ZPastel.Test.csproj", "{F7F3BDF8-7457-4214-BF61-21B67AFDCCFE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZPastel.Test", "ZPastel.Test\ZPastel.Test.csproj", "{F7F3BDF8-7457-4214-BF61-21B67AFDCCFE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZPastel.Core", "ZPastel.Core\ZPastel.Core.csproj", "{0F90B574-5F7A-47C4-9B58-AA2F601F774A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{F7F3BDF8-7457-4214-BF61-21B67AFDCCFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F7F3BDF8-7457-4214-BF61-21B67AFDCCFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F7F3BDF8-7457-4214-BF61-21B67AFDCCFE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F90B574-5F7A-47C4-9B58-AA2F601F774A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F90B574-5F7A-47C4-9B58-AA2F601F774A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F90B574-5F7A-47C4-9B58-AA2F601F774A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F90B574-5F7A-47C4-9B58-AA2F601F774A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
