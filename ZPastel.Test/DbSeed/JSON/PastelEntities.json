@@ -3,14 +3,24 @@
     "Id": 1,
     "PasteleiroId": 1,
     "IsAvailable": true,
-    "Ingredients": "4 Queijos",
-    "Price": 5.00
+    "Ingredients": "Mussarela, Cheddar, Provolone, Catupiry",
+    "Name": "4 Queijos",
+    "Price": 5.00,
+    "CreatedById": 1,
+    "CreatedOn": "2020-10-13T17:06:53.898Z",
+    "LastModifiedById": 1,
+    "LastModifiedOn": "2020-10-13T17:06:53.898Z"
   },
   {
     "Id": 2,
     "PasteleiroId": 1,
     "IsAvailable": true,
-    "Ingredients": "Carne",
-    "Price": 4.50
+    "Ingredients": "Carne Moida",
+    "Name": "Carne",
+    "Price": 4.50,
+    "CreatedById": 1,
+    "CreatedOn": "2020-10-13T17:06:53.898Z",
+    "LastModifiedById": 1,
+    "LastModifiedOn": "2020-10-13T17:06:53.898Z"
   }
 ]

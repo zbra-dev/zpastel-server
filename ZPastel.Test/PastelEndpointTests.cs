@@ -37,14 +37,20 @@ namespace ZPastel.Test
             var firstPastel = pasteis.First();
 
             firstPastel.Id.Should().Be(1);
-            firstPastel.Ingdredients.Should().Be("4 Queijos");
+            firstPastel.Name.Should().Be("4 Queijos");
+            firstPastel.Ingredients.Should().Be("Mussarela, Cheddar, Provolone, Catupiry");
             firstPastel.Price.Should().Be(5);
+            firstPastel.CreatedById.Should().Be(1);
+            firstPastel.LastModifiedById.Should().Be(1);
 
             var secondPastel = pasteis.Skip(1).First();
 
             secondPastel.Id.Should().Be(2);
-            secondPastel.Ingdredients.Should().Be("Carne");
+            secondPastel.Name.Should().Be("Carne");
+            secondPastel.Ingredients.Should().Be("Carne Moida");
             secondPastel.Price.Should().Be(4.50m);
+            secondPastel.CreatedById.Should().Be(1);
+            secondPastel.LastModifiedById.Should().Be(1);
         }
     }
 }
