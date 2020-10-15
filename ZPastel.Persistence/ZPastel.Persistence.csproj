@@ -18,8 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ZPastel.Core\ZPastel.Core.csproj" />
     <ProjectReference Include="..\ZPastel.Model\ZPastel.Model.csproj" />
-    <ProjectReference Include="..\ZPastel.Service\ZPastel.Service.csproj" />
   </ItemGroup>
 
 </Project>
