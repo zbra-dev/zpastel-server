@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ZPastel.Core.Repositories;
 using ZPastel.Model;
@@ -21,6 +22,15 @@ namespace ZPastel.Persistence.Impl
                 .Set<Pastel>()
                 .AsNoTracking()
                 .ToListAsync();
+        }
+
+        public async Task<Pastel> FindById(long id)
+        {
+            return await dataContext
+                .Set<Pastel>()
+                .Where(p => p.Id == id)
+                .AsNoTracking()
+                .SingleOrDefaultAsync();
         }
     }
 }

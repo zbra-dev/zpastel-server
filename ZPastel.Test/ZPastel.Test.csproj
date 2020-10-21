@@ -24,6 +24,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="DbSeed\JSON\OrderEntities.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="DbSeed\JSON\PasteleiroEntities.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

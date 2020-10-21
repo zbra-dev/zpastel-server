@@ -1,0 +1,63 @@
+[
+  {
+    "Id": 1,
+    "TotalPrice": 9.50,
+    "OrderItems": [
+      {
+        "Id": 1,
+        "Name": "4 Queijos",
+        "OrderId": 1,
+        "PastelId": 1,
+        "Price": 5,
+        "Quantity": 1,
+        "Ingredients": "Mussarela, Cheddar, Provolone, Catupiry",
+        "CreatedById": 1,
+        "CreatedOn": "2020-10-13T17:06:53.898Z",
+        "LastModifiedById": 1,
+        "LastModifiedOn": "2020-10-13T17:06:53.898Z"
+      },
+      {
+        "Id": 2,
+        "Name": "Carne",
+        "OrderId": 1,
+        "PastelId": 2,
+        "Price": 4.50,
+        "Quantity": 1,
+        "Ingredients": "Carne Moida",
+        "CreatedById": 1,
+        "CreatedOn": "2020-10-13T17:06:53.898Z",
+        "LastModifiedById": 1,
+        "LastModifiedOn": "2020-10-13T17:06:53.898Z"
+      }
+    ],
+    "CreatedByUsername": "Tester",
+    "CreatedById": 1,
+    "CreatedOn": "2020-10-13T17:06:53.898Z",
+    "LastModifiedById": 1,
+    "LastModifiedOn": "2020-10-13T17:06:53.898Z"
+  },
+  {
+    "Id": 2,
+    "TotalPrice": 18,
+    "OrderItems": [
+      {
+        "Id": 3,
+        "Name": "Carne",
+        "OrderId": 1,
+        "PastelId": 2,
+        "Price": 4.50,
+        "Quantity": 4,
+        "Ingredients": "Carne Moida",
+        "CreatedById": 1,
+        "CreatedOn": "2020-10-13T17:06:53.898Z",
+        "LastModifiedById": 1,
+        "LastModifiedOn": "2020-10-13T17:06:53.898Z"
+      }
+    ],
+    "CreatedByUsername": "Tester",
+    "CreatedById": 1,
+    "CreatedOn": "2020-10-13T17:06:53.898Z",
+    "LastModifiedById": 1,
+    "LastModifiedOn": "2020-10-13T17:06:53.898Z"
+  }
+]

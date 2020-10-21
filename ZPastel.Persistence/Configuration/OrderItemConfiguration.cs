@@ -13,18 +13,16 @@ namespace ZPastel.Persistence.Configuration
             builder.HasKey(o => o.Id);
 
             builder.Property(o => o.Id).HasColumnName("Id");
+            builder.Property(o => o.Name).HasColumnName("Name");
             builder.Property(o => o.Ingredients).HasColumnName("Ingredients");
-            builder.Property(o => o.OrderId).HasColumnName("OrderId");
-            builder.Property(o => o.PastelId).HasColumnName("PastelId");
             builder.Property(o => o.Price).HasColumnName("Price");
             builder.Property(o => o.Quantity).HasColumnName("Quantity");
-            builder.Property(o => o.CreatedById).HasColumnName("CreatedById");
             builder.Property(o => o.CreatedOn).HasColumnName("CreatedOn");
             builder.Property(o => o.LastModifiedById).HasColumnName("LastModifiedById");
             builder.Property(o => o.LastModifiedOn).HasColumnName("LastModifiedOn");
 
-            builder.HasOne(o => o.Order).WithOne().HasForeignKey<OrderItem>(p => p.OrderId);
-            builder.HasOne(o => o.Pastel).WithOne().HasForeignKey<OrderItem>(p => p.PastelId);
+            builder.HasOne(o => o.Order).WithMany().HasForeignKey(p => p.OrderId);
+            builder.HasOne(o => o.Pastel).WithMany().HasForeignKey(p => p.PastelId);
             builder.HasOne(o => o.User).WithMany().HasForeignKey(p => p.CreatedById);
         }
     }

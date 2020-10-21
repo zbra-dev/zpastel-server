@@ -8,10 +8,12 @@ using Microsoft.Extensions.Logging;
 using System;
 using ZPastel.API.Converters;
 using ZPastel.Core.Repositories;
+using ZPastel.API.Filters;
 using ZPastel.Persistence;
 using ZPastel.Persistence.Impl;
 using ZPastel.Service.Contract;
 using ZPastel.Service.Impl;
+using ZPastel.Service.Validators;
 
 namespace ZPastel.API
 {
@@ -27,11 +29,21 @@ namespace ZPastel.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services
+                .AddControllers(options =>
+                {
+                    options.Filters.Add<ExceptionFilter>();
+                });
 
             services.AddTransient<IPastelService, PastelService>();
+            services.AddTransient<IOrderService, OrderService>();
             services.AddTransient<IPastelRepository, PastelRepository>();
-            services.AddTransient<PastelConverter, PastelConverter>();
+            services.AddTransient<IOrderRepository, OrderRepository>();
+            services.AddTransient<PastelConverter>();
+            services.AddTransient<OrderConverter>();
+            services.AddTransient<OrderItemConverter>();
+            services.AddTransient<OrderItemValidator>();
+            services.AddTransient<OrderValidator>();
 
             services.AddDbContext<DataContext>(options =>
             {
