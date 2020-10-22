@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ZPastel.Core\ZPastel.Core.csproj" />
+    <ProjectReference Include="..\ZPastel.Core\ZPastel.Service.API.csproj" />
     <ProjectReference Include="..\ZPastel.Model\ZPastel.Model.csproj" />
   </ItemGroup>
 

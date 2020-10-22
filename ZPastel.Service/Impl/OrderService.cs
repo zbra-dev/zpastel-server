@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using ZPastel.Core.Repositories;
 using ZPastel.Model;
+using ZPastel.Service.API.Repositories;
 using ZPastel.Service.Contract;
 using ZPastel.Service.Exceptions;
 using ZPastel.Service.Validators;
