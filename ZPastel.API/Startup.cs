@@ -10,8 +10,8 @@ using ZPastel.API.Converters;
 using ZPastel.API.Filters;
 using ZPastel.Persistence;
 using ZPastel.Persistence.Impl;
+using ZPastel.Service.API.Contract;
 using ZPastel.Service.API.Repositories;
-using ZPastel.Service.Contract;
 using ZPastel.Service.Impl;
 using ZPastel.Service.Validators;
 

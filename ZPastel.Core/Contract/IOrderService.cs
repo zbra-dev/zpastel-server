@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using ZPastel.Model;
 
-namespace ZPastel.Service.Contract
+namespace ZPastel.Service.API.Contract
 {
     public interface IOrderService
     {
