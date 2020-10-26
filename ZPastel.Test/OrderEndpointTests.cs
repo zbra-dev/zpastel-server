@@ -24,7 +24,7 @@ namespace ZPastel.Test
         }
 
         [Fact]
-        public async Task GetOrders_AllOrder_ShouldReturnAllOrders()
+        public async Task GetOrders_AllOrders_ShouldReturnAllOrders()
         {
             var client = GetClient();
             var response = await client.GetAsync("api/orders");
@@ -125,7 +125,7 @@ namespace ZPastel.Test
         }
 
         [Fact]
-        public async Task GetOrderById_WithInvalidId_ShouldThrowNotFoundException()
+        public async Task GetOrderById_WithInvalidId_ResponseStatusCodeShouldBeNotFound()
         {
             var client = GetClient();
             var response = await client.GetAsync("api/orders/0");
@@ -133,7 +133,7 @@ namespace ZPastel.Test
         }
 
         [Fact]
-        public async Task CreateOrder_WithInput_ShouldCreateOrder()
+        public async Task CreateOrder_WithValidOrderResource_ShouldCreateOrder()
         {
             var body = new OrderResourceBuilder()
                 .WithDefaultValues()
@@ -183,7 +183,7 @@ namespace ZPastel.Test
         }
 
         [Fact]
-        public async Task CreateOrder_WithUserIdNotFound_ShouldThrowNotFoundException()
+        public async Task CreateOrder_WithUserIdNotFound_ResponseStatusCodeShouldBeNotFound()
         {
             var body = new OrderResourceBuilder()
                .WithDefaultValues()
@@ -198,7 +198,7 @@ namespace ZPastel.Test
         }
 
         [Fact]
-        public async Task CreateOrder_WithNegativeTotalPrice_ShouldThrowArgumentException()
+        public async Task CreateOrder_WithNegativeTotalPrice_ResponseStatusCodeShouldBeBadRequest()
         {
             var body = new OrderResourceBuilder()
                .WithDefaultValues()
@@ -213,7 +213,7 @@ namespace ZPastel.Test
         }
 
         [Fact]
-        public async Task CreateOrder_WithEmptyCreatedByUsername_ShouldThrowArgumentException()
+        public async Task CreateOrder_WithEmptyCreatedByUsername_ResponseStatusCodeShouldBeBadRequest()
         {
             var body = new OrderResourceBuilder()
                .WithDefaultValues()
@@ -228,7 +228,7 @@ namespace ZPastel.Test
         }
 
         [Fact]
-        public async Task CreateOrder_WithEmptyOrderItemsList_ShouldThrowArgumentException()
+        public async Task CreateOrder_WithEmptyOrderItemsList_ResponseStatusCodeShouldBeBadRequest()
         {
             var body = new OrderResourceBuilder()
                .WithDefaultValues()
@@ -243,7 +243,7 @@ namespace ZPastel.Test
         }
 
         [Fact]
-        public async Task CreateOrder_WithOrderItemWithNotUserIdNotFound_ShouldThrowNotFoundException()
+        public async Task CreateOrder_WithUserIdNotFoundInOrderItem_ResponseStatusCodeShouldBeNotFound()
         {
             var orderItemResource = new OrderItemResource
             {
@@ -268,7 +268,7 @@ namespace ZPastel.Test
         }
 
         [Fact]
-        public async Task CreateOrder_WithEmptyIngredients_ShouldThrowArgumentException()
+        public async Task CreateOrder_WithEmptyIngredientsInOrderItem_ResponseStatusCodeShouldBeBadRequest()
         {
             var orderItemResource = new OrderItemResource
             {
@@ -293,7 +293,7 @@ namespace ZPastel.Test
         }
 
         [Fact]
-        public async Task CreateOrder_WithEmptyName_ShouldThrowArgumentException()
+        public async Task CreateOrder_WithEmptyNameInOrderItem_ResponseStatusCodeShouldBeBadRequest()
         {
             var orderItemResource = new OrderItemResource
             {
@@ -318,7 +318,7 @@ namespace ZPastel.Test
         }
 
         [Fact]
-        public async Task CreateOrder_WithPastelIdNotInDatabase_ShouldThrowNotFoundException()
+        public async Task CreateOrder_WithPastelIdNotFoundInOrderItem_ResponseStatusCodeShouldBeNotFound()
         {
             var orderItemResource = new OrderItemResource
             {
@@ -343,7 +343,7 @@ namespace ZPastel.Test
         }
 
         [Fact]
-        public async Task CreateOrder_WithNegativePrice_ShouldThrowArgumentException()
+        public async Task CreateOrder_WithNegativePriceInOrderItem_ResponseStatusCodeShouldBeBadRequest()
         {
             var orderItemResource = new OrderItemResource
             {
@@ -370,7 +370,7 @@ namespace ZPastel.Test
         [Theory]
         [InlineData (-1)]
         [InlineData(0)]
-        public async Task CreateOrder_WithNegativeAndZeroQuantity_ShouldThrowArgumentException(int quantity)
+        public async Task CreateOrder_WithNegativeAndZeroQuantityInOrderItem_ResponseStatusCodeShouldBeBadRequest(int quantity)
         {
             var orderItemResource = new OrderItemResource
             {
