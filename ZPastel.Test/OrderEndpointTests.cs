@@ -182,5 +182,216 @@ namespace ZPastel.Test
             orderItemFromCreatedOrder.Name.Should().Be(orderItemFromBody.Name);
         }
 
+        [Fact]
+        public async Task CreateOrder_WithUserIdNotFound_ShouldThrowNotFoundException()
+        {
+            var body = new OrderResourceBuilder()
+               .WithDefaultValues()
+               .WithCreatedById(2)
+               .Build();
+
+            var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
+
+            var client = GetClient();
+            var postResponse = await client.PostAsync("api/orders/create", content);
+            postResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        }
+
+        [Fact]
+        public async Task CreateOrder_WithNegativeTotalPrice_ShouldThrowArgumentException()
+        {
+            var body = new OrderResourceBuilder()
+               .WithDefaultValues()
+               .WithTotalPrice(-2)
+               .Build();
+
+            var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
+
+            var client = GetClient();
+            var postResponse = await client.PostAsync("api/orders/create", content);
+            postResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
+        [Fact]
+        public async Task CreateOrder_WithEmptyCreatedByUsername_ShouldThrowArgumentException()
+        {
+            var body = new OrderResourceBuilder()
+               .WithDefaultValues()
+               .WithCreatedByUsername(string.Empty)
+               .Build();
+
+            var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
+
+            var client = GetClient();
+            var postResponse = await client.PostAsync("api/orders/create", content);
+            postResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
+        [Fact]
+        public async Task CreateOrder_WithEmptyOrderItemsList_ShouldThrowArgumentException()
+        {
+            var body = new OrderResourceBuilder()
+               .WithDefaultValues()
+               .WithOrderItems(new List<OrderItemResource>())
+               .Build();
+
+            var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
+
+            var client = GetClient();
+            var postResponse = await client.PostAsync("api/orders/create", content);
+            postResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
+        [Fact]
+        public async Task CreateOrder_WithOrderItemWithNotUserIdNotFound_ShouldThrowNotFoundException()
+        {
+            var orderItemResource = new OrderItemResource
+            {
+                CreatedById = 2,
+                Ingredients = "Quejo",
+                Name = "Pastel de Queijo",
+                PastelId = 1,
+                Price = 4,
+                Quantity = 1
+            };
+
+            var body = new OrderResourceBuilder()
+               .WithDefaultValues()
+               .WithOrderItems(new[] { orderItemResource })
+               .Build();
+
+            var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
+
+            var client = GetClient();
+            var postResponse = await client.PostAsync("api/orders/create", content);
+            postResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        }
+
+        [Fact]
+        public async Task CreateOrder_WithEmptyIngredients_ShouldThrowArgumentException()
+        {
+            var orderItemResource = new OrderItemResource
+            {
+                CreatedById = 1,
+                Ingredients = string.Empty,
+                Name = "Pastel de Queijo",
+                PastelId = 1,
+                Price = 4,
+                Quantity = 1
+            };
+
+            var body = new OrderResourceBuilder()
+               .WithDefaultValues()
+               .WithOrderItems(new[] { orderItemResource })
+               .Build();
+
+            var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
+
+            var client = GetClient();
+            var postResponse = await client.PostAsync("api/orders/create", content);
+            postResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
+        [Fact]
+        public async Task CreateOrder_WithEmptyName_ShouldThrowArgumentException()
+        {
+            var orderItemResource = new OrderItemResource
+            {
+                CreatedById = 1,
+                Ingredients = "Queijo",
+                Name = string.Empty,
+                PastelId = 1,
+                Price = 4,
+                Quantity = 1
+            };
+
+            var body = new OrderResourceBuilder()
+               .WithDefaultValues()
+               .WithOrderItems(new[] { orderItemResource })
+               .Build();
+
+            var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
+
+            var client = GetClient();
+            var postResponse = await client.PostAsync("api/orders/create", content);
+            postResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
+        [Fact]
+        public async Task CreateOrder_WithPastelIdNotInDatabase_ShouldThrowNotFoundException()
+        {
+            var orderItemResource = new OrderItemResource
+            {
+                CreatedById = 1,
+                Ingredients = "Queijo",
+                Name = "Pastel de Queijo",
+                PastelId = 100,
+                Price = 4,
+                Quantity = 1
+            };
+
+            var body = new OrderResourceBuilder()
+               .WithDefaultValues()
+               .WithOrderItems(new[] { orderItemResource })
+               .Build();
+
+            var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
+
+            var client = GetClient();
+            var postResponse = await client.PostAsync("api/orders/create", content);
+            postResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        }
+
+        [Fact]
+        public async Task CreateOrder_WithNegativePrice_ShouldThrowArgumentException()
+        {
+            var orderItemResource = new OrderItemResource
+            {
+                CreatedById = 1,
+                Ingredients = "Queijo",
+                Name = "Pastel de Queijo",
+                PastelId = 1,
+                Price = -4,
+                Quantity = 1
+            };
+
+            var body = new OrderResourceBuilder()
+               .WithDefaultValues()
+               .WithOrderItems(new[] { orderItemResource })
+               .Build();
+
+            var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
+
+            var client = GetClient();
+            var postResponse = await client.PostAsync("api/orders/create", content);
+            postResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
+        [Theory]
+        [InlineData (-1)]
+        [InlineData(0)]
+        public async Task CreateOrder_WithNegativeAndZeroQuantity_ShouldThrowArgumentException(int quantity)
+        {
+            var orderItemResource = new OrderItemResource
+            {
+                CreatedById = 1,
+                Ingredients = "Queijo",
+                Name = "Pastel de Queijo",
+                PastelId = 1,
+                Price = 4,
+                Quantity = quantity
+            };
+
+            var body = new OrderResourceBuilder()
+               .WithDefaultValues()
+               .WithOrderItems(new[] { orderItemResource })
+               .Build();
+
+            var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
+
+            var client = GetClient();
+            var postResponse = await client.PostAsync("api/orders/create", content);
+            postResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
     }
 }

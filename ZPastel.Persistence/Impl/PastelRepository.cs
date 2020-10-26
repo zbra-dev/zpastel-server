@@ -28,9 +28,8 @@ namespace ZPastel.Persistence.Impl
         {
             return await dataContext
                 .Set<Pastel>()
-                .Where(p => p.Id == id)
                 .AsNoTracking()
-                .SingleOrDefaultAsync();
+                .SingleOrDefaultAsync(p => p.Id == id);
         }
     }
 }
