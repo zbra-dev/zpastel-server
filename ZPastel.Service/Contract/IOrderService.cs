@@ -6,7 +6,7 @@ namespace ZPastel.Service.Contract
 {
     public interface IOrderService
     {
-        Task CreateOrder(Order createOrderCommand);
+        Task<Order> CreateOrder(Order createOrderCommand);
         Task<IReadOnlyList<Order>> FindAll();
         Task<Order> FindById(long id);
     }

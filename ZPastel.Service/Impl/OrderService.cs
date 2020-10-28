@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using ZPastel.Core.Repositories;
 using ZPastel.Model;
@@ -21,7 +20,7 @@ namespace ZPastel.Service.Impl
             this.orderValidator = orderValidator;
         }
 
-        public async Task CreateOrder(Order order)
+        public async Task<Order> CreateOrder(Order order)
         {
             await orderValidator.Validate(order);
 
@@ -37,7 +36,7 @@ namespace ZPastel.Service.Impl
                 orderItem.LastModifiedOn = now;
             }
 
-            await orderRepository.CreateOrder(order);
+            return await orderRepository.CreateOrder(order);
         }
 
         public async Task<IReadOnlyList<Order>> FindAll()

@@ -30,14 +30,14 @@ namespace ZPastel.API.Controllers
 
         [HttpPost("create", Name = nameof(CreateOrder))]
         [Produces("application/json")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<ActionResult> CreateOrder(OrderResource orderResource)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<OrderResource> CreateOrder(OrderResource orderResource)
         {
             var order = orderConverter.ConvertToModel(orderResource);
 
-            await orderService.CreateOrder(order);
+            var savedOrder = await orderService.CreateOrder(order);
 
-            return NoContent();
+            return orderConverter.ConvertToResource(savedOrder);
         }
 
         [HttpGet(Name = nameof(FindAll))]

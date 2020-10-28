@@ -151,17 +151,10 @@ namespace ZPastel.Test
             var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
 
             var postResponse = await client.PostAsync("api/orders/create", content);
-            postResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
+            postResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            getResponse = await client.GetAsync("api/orders");
-            getResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-
-            ordersContent = await getResponse.Content.ReadAsStringAsync();
-            orders = Newtonsoft.Json.JsonConvert.DeserializeObject<IReadOnlyCollection<OrderResource>>(ordersContent);
-
-            orders.Count.Should().Be(3);
-
-            var createdOrder = orders.Where(o => o.Id == 3).Single();
+            var createdOrderResponse = await postResponse.Content.ReadAsStringAsync();
+            var createdOrder = Newtonsoft.Json.JsonConvert.DeserializeObject<OrderResource>(createdOrderResponse);
 
             createdOrder.CreatedById.Should().Be(body.CreatedById);
             createdOrder.CreatedByUsername.Should().Be(body.CreatedByUsername);
@@ -170,6 +163,7 @@ namespace ZPastel.Test
             createdOrder.LastModifiedOn.Should().BeAfter(DateTime.MinValue);
             createdOrder.TotalPrice.Should().Be(body.TotalPrice);
             createdOrder.OrderItems.Count.Should().Be(body.OrderItems.Count);
+            createdOrder.Id.Should().BeGreaterThan(0);
 
             var orderItemFromCreatedOrder = createdOrder.OrderItems.First();
             var orderItemFromBody = body.OrderItems.First();
@@ -180,6 +174,16 @@ namespace ZPastel.Test
             orderItemFromCreatedOrder.Price.Should().Be(orderItemFromBody.Price);
             orderItemFromCreatedOrder.Quantity.Should().Be(orderItemFromBody.Quantity);
             orderItemFromCreatedOrder.Name.Should().Be(orderItemFromBody.Name);
+            orderItemFromCreatedOrder.OrderId.Should().Be(createdOrder.Id);
+            orderItemFromCreatedOrder.Id.Should().BeGreaterThan(0);
+
+            getResponse = await client.GetAsync("api/orders");
+            getResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            ordersContent = await getResponse.Content.ReadAsStringAsync();
+            orders = Newtonsoft.Json.JsonConvert.DeserializeObject<IReadOnlyCollection<OrderResource>>(ordersContent);
+
+            orders.Count.Should().Be(3);
         }
 
         [Fact]
