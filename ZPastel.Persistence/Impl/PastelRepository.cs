@@ -22,5 +22,13 @@ namespace ZPastel.Persistence.Impl
                 .AsNoTracking()
                 .ToListAsync();
         }
+
+        public async Task<Pastel> FindById(long id)
+        {
+            return await dataContext
+                .Set<Pastel>()
+                .AsNoTracking()
+                .SingleOrDefaultAsync(p => p.Id == id);
+        }
     }
 }
