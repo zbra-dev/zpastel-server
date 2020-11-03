@@ -18,15 +18,21 @@ namespace ZPastel.API.Controllers
         private readonly ILogger<PastelController> logger;
         private readonly IPastelService pastelService;
         private readonly PastelConverter pastelConverter;
+        private readonly PastelFilterConverter pastelFilterConverter;
+        private readonly PastelPageConverter pastelPageConverter;
 
         public PastelController(
             ILogger<PastelController> logger, 
             IPastelService pastelService,
-            PastelConverter pastelConverter)
+            PastelConverter pastelConverter,
+            PastelFilterConverter pastelFilterConverter,
+            PastelPageConverter pastelPageConverter)
         {
             this.logger = logger;
             this.pastelService = pastelService;
             this.pastelConverter = pastelConverter;
+            this.pastelFilterConverter = pastelFilterConverter;
+            this.pastelPageConverter = pastelPageConverter;
         }
 
         [HttpGet(Name = nameof(GetPasteis))]
@@ -39,6 +45,18 @@ namespace ZPastel.API.Controllers
             return pasteis
                 .Select(p => pastelConverter.ConvertToResource(p))
                 .ToList();
+        }
+
+        [HttpPost("filter", Name = nameof(FilterPasteis))]
+        [Produces("application/json", Type = typeof(PageResource<PastelResource>))]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<PageResource<PastelResource>>> FilterPasteis(PastelFilterResource pastelFilterResource)
+        {
+            var pastelFilter = pastelFilterConverter.ConvertToModel(pastelFilterResource);
+
+            var pasteisPage = await pastelService.Filter(pastelFilter);
+
+            return pastelPageConverter.ConvertToResource(pasteisPage);
         }
     }
 }
