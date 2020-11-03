@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
-using ZPastel.Core.Repositories;
 using ZPastel.Model;
+using ZPastel.Service.API.Repositories;
 
 namespace ZPastel.Persistence.Impl
 {
