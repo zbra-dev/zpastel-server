@@ -13,9 +13,10 @@ namespace ZPastel.Persistence.Configuration
             builder.HasKey(p => p.Id);
 
             builder.Property(p => p.Id).HasColumnName("Id");
+            builder.Property(p => p.Name).HasColumnName("Name");
             builder.Property(p => p.Ingredients).HasColumnName("Ingredients");
             builder.Property(p => p.IsAvailable).HasColumnName("IsAvailable");
-            builder.Property(p => p.Price).HasColumnName("Price");
+            builder.Property(p => p.Price).HasColumnName("Price").HasColumnType("decimal(18,2)");
             builder.Property(o => o.CreatedById).HasColumnName("CreatedById");
             builder.Property(o => o.CreatedOn).HasColumnName("CreatedOn");
             builder.Property(o => o.LastModifiedById).HasColumnName("LastModifiedById");
