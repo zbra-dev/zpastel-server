@@ -1,4 +1,5 @@
-﻿using ZPastel.API.Resources;
+﻿using System.Collections.Generic;
+using ZPastel.API.Resources;
 
 namespace ZPastel.Test.Builders
 {
@@ -28,6 +29,34 @@ namespace ZPastel.Test.Builders
                     Name = "4 Queijos"
                 }
             };
+
+            return this;
+        }
+
+        public OrderResourceBuilder WithCreatedById(long createdById)
+        {
+            orderResource.CreatedById = createdById;
+
+            return this;
+        }
+
+        public OrderResourceBuilder WithTotalPrice(long totalPrice)
+        {
+            orderResource.TotalPrice = totalPrice;
+
+            return this;
+        }
+
+        public OrderResourceBuilder WithCreatedByUsername(string createdByUsername)
+        {
+            orderResource.CreatedByUsername = createdByUsername;
+
+            return this;
+        }
+
+        public OrderResourceBuilder WithOrderItems(IList<OrderItemResource> orderItemResources)
+        {
+            orderResource.OrderItems = orderItemResources;
 
             return this;
         }
