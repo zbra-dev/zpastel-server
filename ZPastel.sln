@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZPastel.Persistence", "ZPas
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZPastel.Test", "ZPastel.Test\ZPastel.Test.csproj", "{F7F3BDF8-7457-4214-BF61-21B67AFDCCFE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZPastel.Service.API", "ZPastel.Core\ZPastel.Service.API.csproj", "{0F90B574-5F7A-47C4-9B58-AA2F601F774A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZPastel.Service.API", "ZPastel.Service.API\ZPastel.Service.API.csproj", "{0F90B574-5F7A-47C4-9B58-AA2F601F774A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
