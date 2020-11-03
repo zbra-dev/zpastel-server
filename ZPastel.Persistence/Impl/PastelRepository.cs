@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using ZPastel.Model;
 using ZPastel.Service.API.Repositories;
@@ -28,9 +27,8 @@ namespace ZPastel.Persistence.Impl
         {
             return await dataContext
                 .Set<Pastel>()
-                .Where(p => p.Id == id)
                 .AsNoTracking()
-                .SingleOrDefaultAsync();
+                .SingleOrDefaultAsync(p => p.Id == id);
         }
     }
 }

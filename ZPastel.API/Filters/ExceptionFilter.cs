@@ -24,24 +24,19 @@ namespace ZPastel.API.Filters
         {
             var exception = context.Exception;
 
-            switch (exception)
+            if (exception is NotFoundException notFoundException)
             {
-                case NotFoundException notFoundException:
-                    HandleException(context, HttpStatusCode.NotFound, notFoundException.Message);
-                    break;
+                HandleException(context, HttpStatusCode.NotFound, notFoundException.Message);
+            }
+            else if (exception is ArgumentException argumentException)
+            {
+                HandleException(context, HttpStatusCode.BadRequest, argumentException.Message);
+            }
+            else
+            {
+                var message = hostEnvironment.IsProduction() ? "Unhandled Exception" : $"Unhandled Exception: {exception}";
 
-                case ArgumentException argumentException:
-                    HandleException(context, HttpStatusCode.BadRequest, argumentException.Message);
-                    break;
-
-                default:
-                    var message = hostEnvironment.IsProduction() switch
-                    {
-                        true => "Unhandled Exception",
-                        false => $"Unhandled Exception: {exception}"
-                    };
-                    HandleException(context, HttpStatusCode.InternalServerError, message);
-                    break;
+                HandleException(context, HttpStatusCode.InternalServerError, message);
             }
         }
 

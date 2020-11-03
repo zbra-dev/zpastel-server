@@ -9,17 +9,20 @@ namespace ZPastel.Service.Validators
     public class OrderItemValidator : IValidator<OrderItem>
     {
         private readonly IPastelRepository pastelRepository;
+        private readonly IUserRepository userRepository;
 
-        public OrderItemValidator(IPastelRepository pastelRepository)
+        public OrderItemValidator(IPastelRepository pastelRepository, IUserRepository userRepository)
         {
             this.pastelRepository = pastelRepository;
+            this.userRepository = userRepository;
         }
 
         public async Task Validate(OrderItem orderItem)
         {
-            if (orderItem.CreatedById <= 0)
+            var user = await userRepository.FindById(orderItem.CreatedById);
+            if (user == null)
             {
-                throw new ArgumentException("Invalid OrderItem CreatedById");
+                throw new NotFoundException<User>(orderItem.CreatedById.ToString(), nameof(orderItem.CreatedById));
             }
             if (string.IsNullOrEmpty(orderItem.Ingredients))
             {
@@ -32,6 +35,10 @@ namespace ZPastel.Service.Validators
             if (orderItem.Quantity <= 0)
             {
                 throw new ArgumentException("OrderItem Quantity must be greater than 0");
+            }
+            if (orderItem.Price < 0)
+            {
+                throw new ArgumentException("OrderItem Price must be greater or equal than 0");
             }
 
             var pastel = await pastelRepository.FindById(orderItem.PastelId);

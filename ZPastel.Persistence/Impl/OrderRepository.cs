@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using ZPastel.Model;
 using ZPastel.Service.API.Repositories;
@@ -16,13 +15,15 @@ namespace ZPastel.Persistence.Impl
             this.dataContext = dataContext;
         }
 
-        public async Task CreateOrder(Order order)
+        public async Task<Order> CreateOrder(Order order)
         {
             SetOrderToOrderItems(order);
 
             dataContext.Add(order);
 
             await dataContext.SaveChangesAsync();
+
+            return order;
         }
 
         private Order SetOrderToOrderItems(Order order)
@@ -48,10 +49,9 @@ namespace ZPastel.Persistence.Impl
         {
             return await dataContext
                 .Set<Order>()
-                .Where(o => o.Id == id)
                 .Include(o => o.OrderItems)
                 .AsNoTracking()
-                .SingleOrDefaultAsync();
+                .SingleOrDefaultAsync(o => o.Id == id);
         }
     }
 }

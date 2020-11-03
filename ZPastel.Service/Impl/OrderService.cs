@@ -12,17 +12,17 @@ namespace ZPastel.Service.Impl
     public class OrderService : IOrderService
     {
         private readonly IOrderRepository orderRepository;
-        private readonly OrderValidator createOrderCommandValidator;
+        private readonly OrderValidator orderValidator;
 
-        public OrderService(IOrderRepository orderRepository, OrderValidator createOrderCommandValidator)
+        public OrderService(IOrderRepository orderRepository, OrderValidator orderValidator)
         {
             this.orderRepository = orderRepository;
-            this.createOrderCommandValidator = createOrderCommandValidator;
+            this.orderValidator = orderValidator;
         }
 
-        public async Task CreateOrder(Order order)
+        public async Task<Order> CreateOrder(Order order)
         {
-            await createOrderCommandValidator.Validate(order);
+            await orderValidator.Validate(order);
 
             var now = DateTime.Now;
 
@@ -36,7 +36,7 @@ namespace ZPastel.Service.Impl
                 orderItem.LastModifiedOn = now;
             }
 
-            await orderRepository.CreateOrder(order);
+            return await orderRepository.CreateOrder(order);
         }
 
         public async Task<IReadOnlyList<Order>> FindAll()

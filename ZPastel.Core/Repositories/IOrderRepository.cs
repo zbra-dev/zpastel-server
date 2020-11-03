@@ -6,7 +6,7 @@ namespace ZPastel.Service.API.Repositories
 {
     public interface IOrderRepository
     {
-        Task CreateOrder(Order order);
+        Task<Order> CreateOrder(Order order);
         Task<IReadOnlyList<Order>> FindAll();
         Task<Order> FindById(long id);
     }
