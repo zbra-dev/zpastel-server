@@ -43,7 +43,6 @@ namespace ZPastel.API
             services.AddTransient<PastelConverter>();
             services.AddTransient<OrderConverter>();
             services.AddTransient<PastelFilterConverter>();
-            services.AddTransient<PastelPageConverter>();
             services.AddTransient<OrderItemConverter>();
             services.AddTransient<OrderItemValidator>();
             services.AddTransient<OrderValidator>();

@@ -15,7 +15,7 @@ namespace ZPastel.Service.Impl
             this.pastelRepository = pastelRepository;
         }
 
-        public async Task<Page<Pastel>> Filter(PastelFilter pastelFilter)
+        public async Task<IReadOnlyList<Pastel>> Filter(PastelFilter pastelFilter)
         {
             return await pastelRepository.Filter(pastelFilter);
         }

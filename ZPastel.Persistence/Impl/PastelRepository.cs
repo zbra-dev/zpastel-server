@@ -16,22 +16,21 @@ namespace ZPastel.Persistence.Impl
             this.dataContext = dataContext;
         }
 
-        public async Task<Page<Pastel>> Filter(PastelFilter pastelFilter)
+        public async Task<IReadOnlyList<Pastel>> Filter(PastelFilter pastelFilter)
         {
-            var queryResults = dataContext.Set<Pastel>().AsQueryable();
+            if (string.IsNullOrEmpty(pastelFilter.Name))
+            {
+                return new List<Pastel>();
+            }
+
+            var queryResults = dataContext
+                .Set<Pastel>()
+                .Where(p => p.IsAvailable)
+                .AsQueryable();
+
             queryResults = queryResults.Where(q => EF.Functions.Like(q.Name, $"%{pastelFilter.Name}%"));
 
-            var pasteisFound = await queryResults
-                .OrderByDescending(q => q.Id)
-                .Where(e => e.IsAvailable)
-                .Skip(pastelFilter.Skip)
-                .Take(pastelFilter.Take + 1)
-                .ToListAsync();
-
-            var items = pasteisFound.Take(pastelFilter.Take).ToList();
-            var hasMore = pasteisFound.Count > pastelFilter.Take;
-
-            return new Page<Pastel>(items, hasMore);
+            return await queryResults.ToListAsync();
         }
 
         public async Task<IReadOnlyList<Pastel>> FindAll()

@@ -6,7 +6,7 @@ namespace ZPastel.Core.Repositories
 {
     public interface IPastelRepository
     {
-        Task<Page<Pastel>> Filter(PastelFilter pastelFilter);
+        Task<IReadOnlyList<Pastel>> Filter(PastelFilter pastelFilter);
         Task<IReadOnlyList<Pastel>> FindAll();
         Task<Pastel> FindById(long id); 
     }

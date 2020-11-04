@@ -91,15 +91,14 @@ namespace ZPastel.Test
             createResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var filterPasteisContent = await createResponse.Content.ReadAsStringAsync();
-            var filterPasteisResource = Newtonsoft.Json.JsonConvert.DeserializeObject<PageResource<PastelResource>>(filterPasteisContent);
+            var filterPasteisResource = Newtonsoft.Json.JsonConvert.DeserializeObject<IReadOnlyCollection<PastelResource>>(filterPasteisContent);
 
-            filterPasteisResource.Items.Should().HaveCount(1);
+            filterPasteisResource.Should().HaveCount(1);
         }
 
         [Theory]
         [InlineData("PASTEL")]
         [InlineData("pastel")]
-        [InlineData("")]
         public async Task FilterPasteis_WithNameCornerCases_ShouldReturnAllPasteis(string name)
         {
             var command = new FilterPastelResourceBuilder()
@@ -115,85 +114,31 @@ namespace ZPastel.Test
             createResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var filterPasteisContent = await createResponse.Content.ReadAsStringAsync();
-            var filterPasteisResource = Newtonsoft.Json.JsonConvert.DeserializeObject<PageResource<PastelResource>>(filterPasteisContent);
+            var filterPasteisResource = Newtonsoft.Json.JsonConvert.DeserializeObject<IReadOnlyCollection<PastelResource>>(filterPasteisContent);
 
-            filterPasteisResource.Items.Should().HaveCount(2);
+            filterPasteisResource.Should().HaveCount(2);
         }
 
         [Fact]
-        public async Task PaginationTests_WithTakeOne_ShouldCallFilterTwiceAndReturnAllPasteis()
+        public async Task FilterPasteis_WithEmptyName_ShouldReturnNoPasteis()
         {
             var command = new FilterPastelResourceBuilder()
-                .WithTake(1)
+                .WithDefaultValues()
+                .WithName(string.Empty)
                 .Build();
 
-            var serverNumberOfTimesCalled = 0;
-            var pasteis = new List<PastelResource>();
-            PageResource<PastelResource> filterPastelResource;
+            var content = new StringContent(JsonSerializer.Serialize(command), Encoding.UTF8, "application/json");
 
             var client = GetClient();
 
-            do
-            {
-                var content = new StringContent(JsonSerializer.Serialize(command), Encoding.UTF8, "application/json");
-                var createResponse = await client.PostAsync("api/pasteis/filter", content);
-                createResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+            var createResponse = await client.PostAsync("api/pasteis/filter", content);
+            createResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
-                var filterPasteisContent = await createResponse.Content.ReadAsStringAsync();
-                filterPastelResource = Newtonsoft.Json.JsonConvert.DeserializeObject<PageResource<PastelResource>>(filterPasteisContent);
-                pasteis.AddRange(filterPastelResource.Items);
-                command.Skip = pasteis.Count();
-                serverNumberOfTimesCalled++;
-            } while (filterPastelResource.HasMore);
+            var filterPasteisContent = await createResponse.Content.ReadAsStringAsync();
+            var filterPasteisResource = Newtonsoft.Json.JsonConvert.DeserializeObject<IReadOnlyCollection<PastelResource>>(filterPasteisContent);
 
-            serverNumberOfTimesCalled.Should().Be(2);
-            pasteis.Should().HaveCount(2);
-
-            var firstPastelFound = pasteis.First();
-            firstPastelFound.Id.Should().Be(2);
-            firstPastelFound.Name.Should().Be("Pastel de Carne");
-
-            var secondPastelFound = pasteis.Skip(1).First();
-            secondPastelFound.Id.Should().Be(1);
-            secondPastelFound.Name.Should().Be("Pastel de 4 Queijos");
+            filterPasteisResource.Should().BeEmpty();
         }
 
-        [Fact]
-        public async Task PaginationTests_WithTakeTwo_ShouldCallFilterOnceAndReturnAllPasteis()
-        {
-            var command = new FilterPastelResourceBuilder()
-                .WithTake(2)
-                .Build();
-
-            var serverNumberOfTimesCalled = 0;
-            var pasteis = new List<PastelResource>();
-            PageResource<PastelResource> filterPastelResource;
-
-            var client = GetClient();
-
-            do
-            {
-                var content = new StringContent(JsonSerializer.Serialize(command), Encoding.UTF8, "application/json");
-                var createResponse = await client.PostAsync("api/pasteis/filter", content);
-                createResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-
-                var filterPasteisContent = await createResponse.Content.ReadAsStringAsync();
-                filterPastelResource = Newtonsoft.Json.JsonConvert.DeserializeObject<PageResource<PastelResource>>(filterPasteisContent);
-                pasteis.AddRange(filterPastelResource.Items);
-                command.Skip = pasteis.Count();
-                serverNumberOfTimesCalled++;
-            } while (filterPastelResource.HasMore);
-
-            serverNumberOfTimesCalled.Should().Be(1);
-            pasteis.Should().HaveCount(2);
-
-            var firstPastelFound = pasteis.First();
-            firstPastelFound.Id.Should().Be(2);
-            firstPastelFound.Name.Should().Be("Pastel de Carne");
-
-            var secondPastelFound = pasteis.Skip(1).First();
-            secondPastelFound.Id.Should().Be(1);
-            secondPastelFound.Name.Should().Be("Pastel de 4 Queijos");
-        }
     }
 }

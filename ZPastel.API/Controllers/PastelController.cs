@@ -19,44 +19,47 @@ namespace ZPastel.API.Controllers
         private readonly IPastelService pastelService;
         private readonly PastelConverter pastelConverter;
         private readonly PastelFilterConverter pastelFilterConverter;
-        private readonly PastelPageConverter pastelPageConverter;
 
         public PastelController(
             ILogger<PastelController> logger, 
             IPastelService pastelService,
             PastelConverter pastelConverter,
-            PastelFilterConverter pastelFilterConverter,
-            PastelPageConverter pastelPageConverter)
+            PastelFilterConverter pastelFilterConverter)
         {
             this.logger = logger;
             this.pastelService = pastelService;
             this.pastelConverter = pastelConverter;
             this.pastelFilterConverter = pastelFilterConverter;
-            this.pastelPageConverter = pastelPageConverter;
         }
 
         [HttpGet(Name = nameof(GetPasteis))]
-        [Produces("application/json", Type = typeof(Pastel))]
+        [Produces("application/json", Type = typeof(IReadOnlyList<PastelResource>))]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IReadOnlyCollection<PastelResource>> GetPasteis()
+        public async Task<ActionResult<IReadOnlyCollection<PastelResource>>> GetPasteis()
         {
             var pasteis =  await pastelService.FindAll();
 
-            return pasteis
+            var pasteisResource = pasteis
                 .Select(p => pastelConverter.ConvertToResource(p))
                 .ToList();
+
+            return Ok(pasteisResource);
         }
 
         [HttpPost("filter", Name = nameof(FilterPasteis))]
-        [Produces("application/json", Type = typeof(PageResource<PastelResource>))]
+        [Produces("application/json", Type = typeof(IReadOnlyList<PastelResource>))]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<PageResource<PastelResource>>> FilterPasteis(PastelFilterResource pastelFilterResource)
+        public async Task<ActionResult<IReadOnlyCollection<PastelResource>>> FilterPasteis(PastelFilterResource pastelFilterResource)
         {
             var pastelFilter = pastelFilterConverter.ConvertToModel(pastelFilterResource);
 
-            var pasteisPage = await pastelService.Filter(pastelFilter);
+            var pasteis = await pastelService.Filter(pastelFilter);
 
-            return pastelPageConverter.ConvertToResource(pasteisPage);
+            var pasteisResource = pasteis
+                .Select(p => pastelConverter.ConvertToResource(p))
+                .ToList();
+
+            return Ok(pasteisResource);
         }
     }
 }
