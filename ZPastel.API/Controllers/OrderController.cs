@@ -59,5 +59,15 @@ namespace ZPastel.API.Controllers
 
             return orderConverter.ConvertToResource(foundOrder);
         }
+
+        [HttpDelete("delete/{id}", Name = nameof(DeleteOrder))]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult> DeleteOrder(long id)
+        {
+            await orderService.DeleteOrder(id);
+
+            return Ok();
+        }
     }
 }

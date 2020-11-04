@@ -10,8 +10,8 @@ using ZPastel.Persistence;
 namespace ZPastel.Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20201103122229_Initial_Migration")]
-    partial class Initial_Migration
+    [Migration("20201104170508_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -25,7 +25,6 @@ namespace ZPastel.Persistence.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnName("Id")
                         .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -64,7 +63,6 @@ namespace ZPastel.Persistence.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnName("Id")
                         .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -94,9 +92,6 @@ namespace ZPastel.Persistence.Migrations
                     b.Property<long>("OrderId")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("OrderItemId")
-                        .HasColumnType("bigint");
-
                     b.Property<long>("PastelId")
                         .HasColumnType("bigint");
 
@@ -113,8 +108,6 @@ namespace ZPastel.Persistence.Migrations
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("OrderId");
-
-                    b.HasIndex("OrderItemId");
 
                     b.HasIndex("PastelId");
 
@@ -212,7 +205,7 @@ namespace ZPastel.Persistence.Migrations
                     b.HasOne("ZPastel.Model.User", "User")
                         .WithMany()
                         .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
 
@@ -221,25 +214,19 @@ namespace ZPastel.Persistence.Migrations
                     b.HasOne("ZPastel.Model.User", "User")
                         .WithMany()
                         .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("ZPastel.Model.Order", "Order")
-                        .WithMany()
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("ZPastel.Model.Order", null)
                         .WithMany("OrderItems")
-                        .HasForeignKey("OrderItemId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("ZPastel.Model.Pastel", "Pastel")
                         .WithMany()
                         .HasForeignKey("PastelId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
 
@@ -248,13 +235,13 @@ namespace ZPastel.Persistence.Migrations
                     b.HasOne("ZPastel.Model.User", "User")
                         .WithMany()
                         .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("ZPastel.Model.Pasteleiro", "Pasteleiro")
                         .WithMany()
                         .HasForeignKey("PasteleiroId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

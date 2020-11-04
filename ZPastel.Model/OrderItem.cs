@@ -6,7 +6,6 @@ namespace ZPastel.Model
     {
         public long Id { get; set; }
         public string Name { get; set; }
-        public long OrderItemId { get; set; }
         public long OrderId { get; set; }
         public long PastelId { get; set; }
         public Order Order { get; set; }
