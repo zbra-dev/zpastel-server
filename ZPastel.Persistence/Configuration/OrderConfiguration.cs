@@ -12,7 +12,6 @@ namespace ZPastel.Persistence.Configuration
 
             builder.HasKey(o => o.Id);
 
-            builder.Property(o => o.Id).HasColumnName("Id");
             builder.Property(o => o.TotalPrice).HasColumnName("TotalPrice").HasColumnType("decimal(18,2)");
             builder.Property(o => o.CreatedByUsername).HasColumnName("CreatedByUsername");
             builder.Property(o => o.CreatedById).HasColumnName("CreatedById");
@@ -20,8 +19,8 @@ namespace ZPastel.Persistence.Configuration
             builder.Property(o => o.LastModifiedById).HasColumnName("LastModifiedById");
             builder.Property(o => o.LastModifiedOn).HasColumnName("LastModifiedOn");
 
-            builder.HasMany(o => o.OrderItems).WithOne().HasForeignKey(e => e.OrderItemId).Metadata.DeleteBehavior = DeleteBehavior.Restrict;
-            builder.HasOne(o => o.User).WithMany().HasForeignKey(p => p.CreatedById);
+            builder.HasMany(o => o.OrderItems).WithOne(o => o.Order).HasForeignKey(o => o.OrderId);
+            builder.HasOne(o => o.User).WithMany().HasForeignKey(o => o.CreatedById).OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

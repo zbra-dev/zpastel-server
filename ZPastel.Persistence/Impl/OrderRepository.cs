@@ -53,5 +53,12 @@ namespace ZPastel.Persistence.Impl
                 .AsNoTracking()
                 .SingleOrDefaultAsync(o => o.Id == id);
         }
+
+        public async Task DeleteOrder(Order order)
+        {
+            dataContext.Remove(order);
+
+            await dataContext.SaveChangesAsync();
+        }
     }
 }

@@ -22,8 +22,8 @@ namespace ZPastel.Persistence.Configuration
             builder.Property(o => o.LastModifiedById).HasColumnName("LastModifiedById");
             builder.Property(o => o.LastModifiedOn).HasColumnName("LastModifiedOn");
 
-            builder.HasOne(p => p.Pasteleiro).WithMany().HasForeignKey(p => p.PasteleiroId);
-            builder.HasOne(o => o.User).WithMany().HasForeignKey(p => p.CreatedById);
+            builder.HasOne(p => p.Pasteleiro).WithMany().HasForeignKey(p => p.PasteleiroId).OnDelete(DeleteBehavior.NoAction);
+            builder.HasOne(o => o.User).WithMany().HasForeignKey(p => p.CreatedById).OnDelete(DeleteBehavior.NoAction);
         }
     }
 }
