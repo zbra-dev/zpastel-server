@@ -40,6 +40,16 @@ namespace ZPastel.API.Controllers
             return orderConverter.ConvertToResource(savedOrder);
         }
 
+        [HttpPut("edit", Name = nameof(UpdateOrder))]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task UpdateOrder(long id, [FromBody] UpdateOrderResource orderResource)
+        {
+            var order = orderConverter.ConvertToModel(id, orderResource);
+
+            await orderService.UpdateOrder(order);
+        }
+
         [HttpGet(Name = nameof(FindAll))]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]

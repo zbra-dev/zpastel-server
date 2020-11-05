@@ -25,6 +25,17 @@ namespace ZPastel.API.Converters
             };
         }
 
+        public Order ConvertToModel(long id, UpdateOrderResource orderResource)
+        {
+            return new Order
+            {
+                Id = id,
+                TotalPrice = orderResource.TotalPrice,
+                OrderItems = orderResource.OrderItems.Select(i => orderItemConverter.ConvertToModel(i)).ToList(),
+                LastModifiedById = orderResource.ModifiedById,
+            };
+        }
+
         public OrderResource ConvertToResource(Order order)
         {
             return new OrderResource

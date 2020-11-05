@@ -17,6 +17,7 @@ namespace ZPastel.Service.Validators
             this.createOrderItemValidator = createOrderItemValidator;
             this.userRepository = userRepository;
         }
+
         public async Task Validate(Order order)
         {
             var user = await userRepository.FindById(order.CreatedById);

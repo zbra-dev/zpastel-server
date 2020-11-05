@@ -19,6 +19,20 @@ namespace ZPastel.API.Converters
             };
         }
 
+        public OrderItem ConvertToModel(UpdateOrderItemResource updateOrderItemResource)
+        {
+            return new OrderItem
+            {
+                //TODO: Figure out a way to remove this Id from UpdateOrderItemResource
+                Id = updateOrderItemResource.Id,
+                Name = updateOrderItemResource.Name,
+                Price = updateOrderItemResource.Price,
+                Quantity = updateOrderItemResource.Quantity,
+                Ingredients = updateOrderItemResource.Ingredients,
+                LastModifiedById = updateOrderItemResource.ModifiedById
+            };
+        }
+
         public OrderItemResource ConvertToResource(OrderItem orderItem)
         {
             return new OrderItemResource

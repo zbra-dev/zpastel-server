@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ZPastel.Core.Repositories;
 using ZPastel.Model;
@@ -37,6 +38,42 @@ namespace ZPastel.Service.Impl
             }
 
             return await orderRepository.CreateOrder(order);
+        }
+
+        public async Task UpdateOrder(Order updateOrderCommand)
+        {
+            var id = updateOrderCommand.Id;
+            var order = await FindById(id);
+
+            if (order == null)
+            {
+                throw new NotFoundException<Order>(id.ToString(), nameof(Order.Id));
+            }
+
+            order.TotalPrice = updateOrderCommand.TotalPrice;
+            order.LastModifiedById = updateOrderCommand.LastModifiedById;
+            var now = DateTime.Now;
+            order.LastModifiedOn = now;
+
+            foreach(var updatedOrderItem in updateOrderCommand.OrderItems)
+            {
+                if (!order.OrderItems.Any(o => o.Id == updatedOrderItem.Id))
+                {
+                    //TODO: create a better exception for this
+                    throw new NotFoundException<OrderItem>(updatedOrderItem.Id.ToString(), nameof(OrderItem.Id));
+                }
+
+                var orderItem = order.OrderItems.Single(o => o.Id == updatedOrderItem.Id);
+                orderItem.Name = updatedOrderItem.Name;
+                orderItem.Price = updatedOrderItem.Price;
+                orderItem.Quantity = updatedOrderItem.Quantity;
+                orderItem.Ingredients = updatedOrderItem.Ingredients;
+                orderItem.LastModifiedById = updatedOrderItem.LastModifiedById;
+                orderItem.LastModifiedOn = now;
+            }
+            await orderValidator.Validate(order);
+
+            await orderRepository.UpdateOrder(order);
         }
 
         public async Task<IReadOnlyList<Order>> FindAll()
