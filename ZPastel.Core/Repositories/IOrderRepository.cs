@@ -10,5 +10,6 @@ namespace ZPastel.Core.Repositories
         Task DeleteOrder(Order id);
         Task<IReadOnlyList<Order>> FindAll();
         Task<Order> FindById(long id);
+        Task<IReadOnlyList<Order>> FindByUserId(long userId);
     }
 }
