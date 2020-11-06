@@ -75,5 +75,17 @@ namespace ZPastel.API.Controllers
 
             return Ok();
         }
+
+        [HttpGet("user/{userId}", Name = nameof(FindByUserId))]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IReadOnlyList<OrderResource>>> FindByUserId(long userId)
+        {
+            var allUserOrders = await orderService.FindByUserId(userId);
+
+            var allUserOrdersResource = allUserOrders.Select(o => orderConverter.ConvertToResource(o)).ToList();
+
+            return Ok(allUserOrdersResource);
+        }
     }
 }

@@ -10,5 +10,7 @@ namespace ZPastel.Service.Contract
         Task DeleteOrder(long id);
         Task<IReadOnlyList<Order>> FindAll();
         Task<Order> FindById(long id);
+
+        Task<IReadOnlyList<Order>> FindByUserId(long userId);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ZPastel.Core.Repositories;
 using ZPastel.Model;
@@ -59,6 +60,16 @@ namespace ZPastel.Persistence.Impl
             dataContext.Remove(order);
 
             await dataContext.SaveChangesAsync();
+        }
+
+        public async Task<IReadOnlyList<Order>> FindByUserId(long userId)
+        {
+            return await dataContext
+                .Set<Order>()
+                .Where(o => o.CreatedById == userId)
+                .Include(o => o.OrderItems)
+                .AsNoTracking()
+                .ToListAsync();
         }
     }
 }
