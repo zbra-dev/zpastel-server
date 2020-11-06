@@ -9,9 +9,7 @@ namespace ZPastel.API.Converters
         {
             return new PastelFilter
             {
-                Name = pastelFilterResource.Name,
-                Skip = pastelFilterResource.Skip,
-                Take = pastelFilterResource.Take,
+                Name = pastelFilterResource.Name
             };
         }
     }
