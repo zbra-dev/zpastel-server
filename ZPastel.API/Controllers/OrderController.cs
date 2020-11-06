@@ -17,15 +17,18 @@ namespace ZPastel.API.Controllers
         private readonly ILogger<OrderController> _logger;
         private readonly IOrderService orderService;
         private readonly OrderConverter orderConverter;
+        private readonly UpdateOrderConverter updateOrderConverter;
 
         public OrderController(
             ILogger<OrderController> logger, 
             IOrderService orderService,
-            OrderConverter orderConverter)
+            OrderConverter orderConverter,
+            UpdateOrderConverter updateOrderConverter)
         {
             _logger = logger;
             this.orderService = orderService;
             this.orderConverter = orderConverter;
+            this.updateOrderConverter = updateOrderConverter;
         }
 
         [HttpPost("create", Name = nameof(CreateOrder))]
@@ -40,14 +43,14 @@ namespace ZPastel.API.Controllers
             return orderConverter.ConvertToResource(savedOrder);
         }
 
-        [HttpPut("edit", Name = nameof(UpdateOrder))]
+        [HttpPut("edit/{id}", Name = nameof(UpdateOrder))]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task UpdateOrder(long id, [FromBody] UpdateOrderResource orderResource)
+        public async Task UpdateOrder(long id, UpdateOrderResource updateOrderResource)
         {
-            var order = orderConverter.ConvertToModel(id, orderResource);
+            var order = updateOrderConverter.ConvertToModel(updateOrderResource);
 
-            await orderService.UpdateOrder(order);
+            await orderService.UpdateOrder(id, order);
         }
 
         [HttpGet(Name = nameof(FindAll))]

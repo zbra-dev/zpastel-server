@@ -14,11 +14,16 @@ namespace ZPastel.Service.Impl
     {
         private readonly IOrderRepository orderRepository;
         private readonly OrderValidator orderValidator;
+        private readonly UpdateOrderValidator updateOrderValidator;
 
-        public OrderService(IOrderRepository orderRepository, OrderValidator orderValidator)
+        public OrderService(
+            IOrderRepository orderRepository, 
+            OrderValidator orderValidator,
+            UpdateOrderValidator updateOrderValidator)
         {
             this.orderRepository = orderRepository;
             this.orderValidator = orderValidator;
+            this.updateOrderValidator = updateOrderValidator;
         }
 
         public async Task<Order> CreateOrder(Order order)
@@ -40,38 +45,30 @@ namespace ZPastel.Service.Impl
             return await orderRepository.CreateOrder(order);
         }
 
-        public async Task UpdateOrder(Order updateOrderCommand)
+        public async Task UpdateOrder(long id, UpdateOrder updateOrderCommand)
         {
-            var id = updateOrderCommand.Id;
-            var order = await FindById(id);
+            await updateOrderValidator.Validate(updateOrderCommand);
 
-            if (order == null)
-            {
-                throw new NotFoundException<Order>(id.ToString(), nameof(Order.Id));
-            }
+            var order = await FindById(id);
 
             order.TotalPrice = updateOrderCommand.TotalPrice;
             order.LastModifiedById = updateOrderCommand.LastModifiedById;
             var now = DateTime.Now;
             order.LastModifiedOn = now;
 
-            foreach(var updatedOrderItem in updateOrderCommand.OrderItems)
+            foreach(var updatedOrderItem in updateOrderCommand.UpdateOrderItems)
             {
-                if (!order.OrderItems.Any(o => o.Id == updatedOrderItem.Id))
+                var orderItem = order.OrderItems.SingleOrDefault(o => o.Id == updatedOrderItem.Id);
+
+                if (orderItem == null)
                 {
-                    //TODO: create a better exception for this
-                    throw new NotFoundException<OrderItem>(updatedOrderItem.Id.ToString(), nameof(OrderItem.Id));
+                    //insert. See how to do this
                 }
 
-                var orderItem = order.OrderItems.Single(o => o.Id == updatedOrderItem.Id);
-                orderItem.Name = updatedOrderItem.Name;
-                orderItem.Price = updatedOrderItem.Price;
                 orderItem.Quantity = updatedOrderItem.Quantity;
-                orderItem.Ingredients = updatedOrderItem.Ingredients;
-                orderItem.LastModifiedById = updatedOrderItem.LastModifiedById;
+                orderItem.LastModifiedById = updatedOrderItem.ModifiedById;
                 orderItem.LastModifiedOn = now;
             }
-            await orderValidator.Validate(order);
 
             await orderRepository.UpdateOrder(order);
         }

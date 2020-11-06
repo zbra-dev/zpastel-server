@@ -132,6 +132,8 @@ namespace ZPastel.Test
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
 
+        #region CreateOrder Tests
+
         [Fact]
         public async Task CreateOrder_WithValidOrderResource_ShouldCreateOrder()
         {
@@ -372,7 +374,7 @@ namespace ZPastel.Test
         }
 
         [Theory]
-        [InlineData (-1)]
+        [InlineData(-1)]
         [InlineData(0)]
         public async Task CreateOrder_WithNegativeAndZeroQuantityInOrderItem_ResponseStatusCodeShouldBeBadRequest(int quantity)
         {
@@ -396,6 +398,48 @@ namespace ZPastel.Test
             var client = GetClient();
             var postResponse = await client.PostAsync("api/orders/create", content);
             postResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
+        #endregion
+
+        [Fact]
+        public async Task UpdateOrder_WithValidId_ShouldUpdateOrder()
+        {
+            var client = GetClient();
+            var orderResource = new UpdateOrderResourceBuilder()
+                .WithDefaultValues()
+                .Build();
+
+            var orderBeforeUpdatingResponse = await client.GetAsync("api/orders/1");
+            orderBeforeUpdatingResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var orderBeforeUpdatingContent = await orderBeforeUpdatingResponse.Content.ReadAsStringAsync();
+            var orderBeforeUpdating = Newtonsoft.Json.JsonConvert.DeserializeObject<OrderResource>(orderBeforeUpdatingContent);
+
+            var content = new StringContent(JsonSerializer.Serialize(orderResource), Encoding.UTF8, "application/json");
+            var response = await client.PutAsync("api/orders/edit/1", content);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var updatedResponse = await client.GetAsync("api/orders/1");
+            updatedResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var updatedOrderContent = await updatedResponse.Content.ReadAsStringAsync();
+            var updatedOrder = Newtonsoft.Json.JsonConvert.DeserializeObject<OrderResource>(updatedOrderContent);
+
+            updatedOrder.TotalPrice.Should().Be(orderResource.TotalPrice);
+            updatedOrder.LastModifiedById.Should().Be(orderResource.ModifiedById);
+
+            var updatedOrderItem = updatedOrder.OrderItems.First(o => o.Id == 1);
+            var updatedOrderItemResource = orderResource.OrderItems.First(o => o.Id == 1);
+
+            updatedOrderItem.LastModifiedById.Should().Be(updatedOrderItemResource.ModifiedById);
+            updatedOrderItem.Quantity.Should().Be(updatedOrderItemResource.Quantity);
+
+            //Comparing with before updating
+            updatedOrder.Id.Should().Be(orderBeforeUpdating.Id);
+            updatedOrder.CreatedByUsername.Should().Be(orderBeforeUpdating.CreatedByUsername);
+            updatedOrder.CreatedById.Should().Be(orderBeforeUpdating.CreatedById);
+            updatedOrder.CreatedOn.Should().Be(orderBeforeUpdating.CreatedOn);
         }
     }
 }
