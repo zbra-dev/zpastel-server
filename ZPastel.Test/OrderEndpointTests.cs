@@ -1,5 +1,7 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,17 +12,30 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
 using ZPastel.API.Resources;
+using ZPastel.Model;
+using ZPastel.Persistence;
 using ZPastel.Test.Builders;
 using ZPastel.Tests;
 
 namespace ZPastel.Test
 {
-    public class OrderEndpointTests
+    public class OrderEndpointTests : IDisposable
     {
         private readonly CustomWebApplicationFactory factory;
+        private readonly DataContext dataContext;
+        private readonly IServiceScope serviceScope;
         public OrderEndpointTests()
         {
             factory = new CustomWebApplicationFactory();
+
+            serviceScope = factory.Services.CreateScope();
+
+            dataContext = serviceScope.ServiceProvider.GetRequiredService<DataContext>();
+        }
+
+        public void Dispose()
+        {
+            serviceScope.Dispose();
         }
 
         [Fact]
@@ -51,7 +66,7 @@ namespace ZPastel.Test
             firstOrderItemFromFirstOrder.CreatedById.Should().Be(1);
             firstOrderItemFromFirstOrder.Ingredients.Should().Be("Mussarela, Cheddar, Provolone, Catupiry");
             firstOrderItemFromFirstOrder.LastModifiedById.Should().Be(1);
-            firstOrderItemFromFirstOrder.OrderId.Should().Be(1);
+            firstOrderItemFromFirstOrder.OrderId.Should().Be(firstOrder.Id);
             firstOrderItemFromFirstOrder.PastelId.Should().Be(1);
             firstOrderItemFromFirstOrder.Price.Should().Be(5);
             firstOrderItemFromFirstOrder.Quantity.Should().Be(1);
@@ -61,7 +76,7 @@ namespace ZPastel.Test
             secondOrderItemFromFirstOrder.CreatedById.Should().Be(1);
             secondOrderItemFromFirstOrder.Ingredients.Should().Be("Carne Moida");
             secondOrderItemFromFirstOrder.LastModifiedById.Should().Be(1);
-            secondOrderItemFromFirstOrder.OrderId.Should().Be(1);
+            secondOrderItemFromFirstOrder.OrderId.Should().Be(firstOrder.Id);
             secondOrderItemFromFirstOrder.PastelId.Should().Be(2);
             secondOrderItemFromFirstOrder.Price.Should().Be(4.50m);
             secondOrderItemFromFirstOrder.Quantity.Should().Be(1);
@@ -82,7 +97,7 @@ namespace ZPastel.Test
             firstOrderItemFromSecondOrder.CreatedById.Should().Be(1);
             firstOrderItemFromSecondOrder.Ingredients.Should().Be("Carne Moida");
             firstOrderItemFromSecondOrder.LastModifiedById.Should().Be(1);
-            firstOrderItemFromSecondOrder.OrderId.Should().Be(1);
+            firstOrderItemFromSecondOrder.OrderId.Should().Be(secondOrder.Id);
             firstOrderItemFromSecondOrder.PastelId.Should().Be(2);
             firstOrderItemFromSecondOrder.Price.Should().Be(4.50m);
             firstOrderItemFromSecondOrder.Quantity.Should().Be(4);
@@ -118,7 +133,7 @@ namespace ZPastel.Test
             firstOrderItemFromSecondOrder.CreatedById.Should().Be(1);
             firstOrderItemFromSecondOrder.Ingredients.Should().Be("Carne Moida");
             firstOrderItemFromSecondOrder.LastModifiedById.Should().Be(1);
-            firstOrderItemFromSecondOrder.OrderId.Should().Be(1);
+            firstOrderItemFromSecondOrder.OrderId.Should().Be(order.Id);
             firstOrderItemFromSecondOrder.PastelId.Should().Be(2);
             firstOrderItemFromSecondOrder.Price.Should().Be(4.50m);
             firstOrderItemFromSecondOrder.Quantity.Should().Be(4);
@@ -396,6 +411,37 @@ namespace ZPastel.Test
             var client = GetClient();
             var postResponse = await client.PostAsync("api/orders/create", content);
             postResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
+        [Fact]
+        public async Task DeleteOrder_WithOrderItems_ShouldDeleteTheOrderAndAllOrderItems()
+        {
+            var order = dataContext
+                .Set<Order>()
+                .Where(o => o.Id == 2)
+                .Include(o => o.OrderItems)
+                .SingleOrDefault();
+
+            order.Should().NotBeNull();
+            order.OrderItems.Should().NotBeEmpty();
+
+            var client = GetClient();
+            var response = await client.DeleteAsync("api/orders/delete/2");
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            order = dataContext
+                .Set<Order>()
+                .Where(o => o.Id == 2)
+                .SingleOrDefault();
+
+            order.Should().BeNull();
+
+            var orderItems = dataContext
+                .Set<OrderItem>()
+                .Where(o => o.OrderId == 2)
+                .ToList();
+
+            orderItems.Should().BeEmpty();
         }
     }
 }

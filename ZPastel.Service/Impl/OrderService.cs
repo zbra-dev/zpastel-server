@@ -39,6 +39,18 @@ namespace ZPastel.Service.Impl
             return await orderRepository.CreateOrder(order);
         }
 
+        public async Task DeleteOrder(long id)
+        {
+            var order = await orderRepository.FindById(id);
+
+            if (order == null)
+            {
+                throw new NotFoundException<Order>(id.ToString(), nameof(Order.Id));
+            }
+
+            await orderRepository.DeleteOrder(order);
+        }
+
         public async Task<IReadOnlyList<Order>> FindAll()
         {
             return await orderRepository.FindAll();
