@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -418,9 +419,11 @@ namespace ZPastel.Test
             var order = dataContext
                 .Set<Order>()
                 .Where(o => o.Id == 2)
+                .Include(o => o.OrderItems)
                 .SingleOrDefault();
 
             order.Should().NotBeNull();
+            order.OrderItems.Should().NotBeEmpty();
 
             var client = GetClient();
             var response = await client.DeleteAsync("api/orders/delete/2");
