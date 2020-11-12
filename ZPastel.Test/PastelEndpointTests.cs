@@ -42,6 +42,7 @@ namespace ZPastel.Test
             firstPastel.Price.Should().Be(5);
             firstPastel.CreatedById.Should().Be(1);
             firstPastel.LastModifiedById.Should().Be(1);
+            firstPastel.FlavorImageUrl.Should().Be("https://www.fotosdepastel.com/4queijos");
 
             var secondPastel = pasteis.Skip(1).First();
 
@@ -51,6 +52,7 @@ namespace ZPastel.Test
             secondPastel.Price.Should().Be(4.50m);
             secondPastel.CreatedById.Should().Be(1);
             secondPastel.LastModifiedById.Should().Be(1);
+            secondPastel.FlavorImageUrl.Should().Be("https://www.fotosdepastel.com/carne");
 
             var thirdPastel = pasteis.Skip(2).First();
 
@@ -60,6 +62,7 @@ namespace ZPastel.Test
             thirdPastel.Price.Should().Be(3);
             thirdPastel.CreatedById.Should().Be(1);
             thirdPastel.LastModifiedById.Should().Be(1);
+            thirdPastel.FlavorImageUrl.Should().Be("https://www.fotosdepastel.com/vento");
         }
 
         private HttpClient GetClient()

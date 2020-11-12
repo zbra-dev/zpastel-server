@@ -9,7 +9,8 @@
     "CreatedById": 1,
     "CreatedOn": "2020-10-13T17:06:53.898Z",
     "LastModifiedById": 1,
-    "LastModifiedOn": "2020-10-13T17:06:53.898Z"
+    "LastModifiedOn": "2020-10-13T17:06:53.898Z",
+    "FlavorImageUrl": "https://www.fotosdepastel.com/4queijos"
   },
   {
     "Id": 2,
@@ -21,7 +22,8 @@
     "CreatedById": 1,
     "CreatedOn": "2020-10-13T17:06:53.898Z",
     "LastModifiedById": 1,
-    "LastModifiedOn": "2020-10-13T17:06:53.898Z"
+    "LastModifiedOn": "2020-10-13T17:06:53.898Z",
+    "FlavorImageUrl": "https://www.fotosdepastel.com/carne"
   },
   {
     "Id": 3,
@@ -33,6 +35,7 @@
     "CreatedById": 1,
     "CreatedOn": "2020-10-13T17:06:53.898Z",
     "LastModifiedById": 1,
-    "LastModifiedOn": "2020-10-13T17:06:53.898Z"
+    "LastModifiedOn": "2020-10-13T17:06:53.898Z",
+    "FlavorImageUrl": "https://www.fotosdepastel.com/vento"
   }
 ]
