@@ -16,7 +16,8 @@ namespace ZPastel.API.Converters
                 CreatedOn = pastel.CreatedOn,
                 LastModifiedById = pastel.LastModifiedById,
                 LastModifiedOn = pastel.LastModifiedOn,
-                Name = pastel.Name
+                Name = pastel.Name,
+                FlavorImageUrl = pastel.FlavorImageUrl
             };
         }
     }

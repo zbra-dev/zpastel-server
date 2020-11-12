@@ -16,5 +16,6 @@ namespace ZPastel.Model
         public DateTime CreatedOn { get; set; }
         public long LastModifiedById { get; set; }
         public DateTime LastModifiedOn { get; set; }
+        public string FlavorImageUrl { get; set; }
     }
 }
