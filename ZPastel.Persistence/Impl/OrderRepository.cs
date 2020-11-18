@@ -36,6 +36,7 @@ namespace ZPastel.Persistence.Impl
 
         public async Task UpdateOrder(Order order)
         {
+            SetOrderToOrderItems(order);
             dataContext.Update(order);
             await dataContext.SaveChangesAsync();
         }

@@ -14,15 +14,18 @@ namespace ZPastel.Service.Impl
     {
         private readonly IOrderRepository orderRepository;
         private readonly OrderValidator orderValidator;
+        private readonly OrderItemValidator orderItemValidator;
         private readonly UpdateOrderValidator updateOrderValidator;
 
         public OrderService(
             IOrderRepository orderRepository, 
             OrderValidator orderValidator,
+            OrderItemValidator orderItemValidator,
             UpdateOrderValidator updateOrderValidator)
         {
             this.orderRepository = orderRepository;
             this.orderValidator = orderValidator;
+            this.orderItemValidator = orderItemValidator;
             this.updateOrderValidator = updateOrderValidator;
         }
 
@@ -45,32 +48,54 @@ namespace ZPastel.Service.Impl
             return await orderRepository.CreateOrder(order);
         }
 
-        public async Task UpdateOrder(long id, UpdateOrder updateOrderCommand)
+        public async Task UpdateOrder(long id, UpdateOrder updateOrder)
         {
-            await updateOrderValidator.Validate(updateOrderCommand);
+            await updateOrderValidator.Validate(updateOrder);
 
-            var order = await FindById(id);
+            var persistedOrder = await FindById(id);
 
-            order.TotalPrice = updateOrderCommand.TotalPrice;
-            order.LastModifiedById = updateOrderCommand.LastModifiedById;
+            persistedOrder.TotalPrice = updateOrder.TotalPrice;
+            persistedOrder.LastModifiedById = updateOrder.LastModifiedById;
             var now = DateTime.Now;
-            order.LastModifiedOn = now;
+            persistedOrder.LastModifiedOn = now;
+            var orderItemsNotToBeDeletedMapping = new Dictionary<long, OrderItem>();
 
-            foreach(var updatedOrderItem in updateOrderCommand.UpdateOrderItems)
+            var persistedOrderItemsMapping = persistedOrder.OrderItems.ToDictionary(o => o.Id);
+            foreach(var updatedOrderItem in updateOrder.UpdateOrderItems)
             {
-                var orderItem = order.OrderItems.SingleOrDefault(o => o.Id == updatedOrderItem.Id);
-
-                if (orderItem == null)
+                if (updatedOrderItem.Id != 0)
                 {
-                    //insert. See how to do this
+                    orderItemsNotToBeDeletedMapping.Add(updatedOrderItem.Id, updatedOrderItem);
                 }
 
-                orderItem.Quantity = updatedOrderItem.Quantity;
-                orderItem.LastModifiedById = updatedOrderItem.ModifiedById;
-                orderItem.LastModifiedOn = now;
+                if (persistedOrderItemsMapping.ContainsKey(updatedOrderItem.Id))
+                {
+                    var persistedOrderItem = persistedOrderItemsMapping[updatedOrderItem.Id];
+                    persistedOrderItem.Quantity = updatedOrderItem.Quantity;
+                    persistedOrderItem.LastModifiedById = updatedOrderItem.LastModifiedById;
+                    persistedOrderItem.LastModifiedOn = now;
+                }
+                else
+                {
+                    //TODO: check how to also validate when only updating.
+                    updatedOrderItem.CreatedById = updateOrder.LastModifiedById;
+                    updatedOrderItem.LastModifiedById = updateOrder.LastModifiedById;
+                    updatedOrderItem.CreatedOn = now;
+                    updatedOrderItem.LastModifiedOn = now;
+                    await orderItemValidator.Validate(updatedOrderItem);
+                    persistedOrder.OrderItems.Add(updatedOrderItem);
+                }
             }
 
-            await orderRepository.UpdateOrder(order);
+            foreach (var persistedOrderItemKeyValuePair in persistedOrderItemsMapping)
+            {
+                if (!orderItemsNotToBeDeletedMapping.ContainsKey(persistedOrderItemKeyValuePair.Key))
+                {
+                    persistedOrder.OrderItems.Remove(persistedOrderItemKeyValuePair.Value);
+                }
+            }
+
+            await orderRepository.UpdateOrder(persistedOrder);
         }
 
         public async Task<IReadOnlyList<Order>> FindAll()

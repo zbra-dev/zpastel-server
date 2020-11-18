@@ -28,8 +28,8 @@ namespace ZPastel.Test
 
             var pasteisContent = await response.Content.ReadAsStringAsync();
             var pasteis = Newtonsoft.Json.JsonConvert.DeserializeObject<IReadOnlyCollection<PastelResource>>(pasteisContent);
-
-            pasteis.Count.Should().Be(2);
+            //TODO: Assert the 2 new pasteis
+            pasteis.Count.Should().Be(4);
 
             var firstPastel = pasteis.First();
 

@@ -5,13 +5,17 @@ namespace ZPastel.API.Converters
 {
     public class UpdateOrderItemConverter
     {
-        public UpdateOrderItem ConvertToModel(long id, UpdateOrderItemResource updateOrderItemResource)
+        public OrderItem ConvertToModel(long id, UpdateOrderItemResource updateOrderItemResource)
         {
-            return new UpdateOrderItem
+            return new OrderItem
             {
                 Id = id,
-                Quantity = updateOrderItemResource.Quantity,
-                ModifiedById = updateOrderItemResource.ModifiedById
+                Ingredients = updateOrderItemResource.Ingredients,
+                LastModifiedById = updateOrderItemResource.LastModifiedById,
+                Name = updateOrderItemResource.Name,
+                PastelId = updateOrderItemResource.PastelId,
+                Price = updateOrderItemResource.Price,
+                Quantity = updateOrderItemResource.Quantity
             };
         }
     }

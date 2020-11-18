@@ -1,4 +1,5 @@
-﻿using ZPastel.API.Resources;
+﻿using System.Collections.Generic;
+using ZPastel.API.Resources;
 
 namespace ZPastel.Test.Builders
 {
@@ -19,12 +20,30 @@ namespace ZPastel.Test.Builders
                 new UpdateOrderItemResource
                 {
                     Id = 1,
-                    ModifiedById = 2,
+                    LastModifiedById = 2,
                     Quantity = 2
                 }
             };
             updateOrder.ModifiedById = 2;
 
+            return this;
+        }
+
+        public UpdateOrderResourceBuilder WithTotalPrice(decimal price)
+        {
+            updateOrder.TotalPrice = price;
+            return this;
+        }
+
+        public UpdateOrderResourceBuilder WithOrderItems(IList<UpdateOrderItemResource> orderItemResources)
+        {
+            updateOrder.OrderItems = orderItemResources;
+            return this;
+        }
+
+        public UpdateOrderResourceBuilder WithModifiedById(long id)
+        {
+            updateOrder.ModifiedById = id;
             return this;
         }
 

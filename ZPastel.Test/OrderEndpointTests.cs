@@ -18,14 +18,19 @@ namespace ZPastel.Test
     public class OrderEndpointTests
     {
         private readonly CustomWebApplicationFactory factory;
+        //TODO: use this newly created field in every test
+        private readonly HttpClient client;
+
         public OrderEndpointTests()
         {
             factory = new CustomWebApplicationFactory();
+            client = factory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
         }
 
         [Fact]
         public async Task GetOrders_AllOrders_ShouldReturnAllOrders()
         {
+            //TODO: Use an extension method (e.g. response.Deserialize) to make this code cleaner. Update every test
             var client = GetClient();
             var response = await client.GetAsync("api/orders");
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -132,8 +137,6 @@ namespace ZPastel.Test
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
 
-        #region CreateOrder Tests
-
         [Fact]
         public async Task CreateOrder_WithValidOrderResource_ShouldCreateOrder()
         {
@@ -193,7 +196,7 @@ namespace ZPastel.Test
         {
             var body = new OrderResourceBuilder()
                .WithDefaultValues()
-               .WithCreatedById(2)
+               .WithCreatedById(3)
                .Build();
 
             var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
@@ -253,7 +256,7 @@ namespace ZPastel.Test
         {
             var orderItemResource = new OrderItemResource
             {
-                CreatedById = 2,
+                CreatedById = 3,
                 Ingredients = "Quejo",
                 Name = "Pastel de Queijo",
                 PastelId = 1,
@@ -398,48 +401,6 @@ namespace ZPastel.Test
             var client = GetClient();
             var postResponse = await client.PostAsync("api/orders/create", content);
             postResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        }
-
-        #endregion
-
-        [Fact]
-        public async Task UpdateOrder_WithValidId_ShouldUpdateOrder()
-        {
-            var client = GetClient();
-            var orderResource = new UpdateOrderResourceBuilder()
-                .WithDefaultValues()
-                .Build();
-
-            var orderBeforeUpdatingResponse = await client.GetAsync("api/orders/1");
-            orderBeforeUpdatingResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-
-            var orderBeforeUpdatingContent = await orderBeforeUpdatingResponse.Content.ReadAsStringAsync();
-            var orderBeforeUpdating = Newtonsoft.Json.JsonConvert.DeserializeObject<OrderResource>(orderBeforeUpdatingContent);
-
-            var content = new StringContent(JsonSerializer.Serialize(orderResource), Encoding.UTF8, "application/json");
-            var response = await client.PutAsync("api/orders/edit/1", content);
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-
-            var updatedResponse = await client.GetAsync("api/orders/1");
-            updatedResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-
-            var updatedOrderContent = await updatedResponse.Content.ReadAsStringAsync();
-            var updatedOrder = Newtonsoft.Json.JsonConvert.DeserializeObject<OrderResource>(updatedOrderContent);
-
-            updatedOrder.TotalPrice.Should().Be(orderResource.TotalPrice);
-            updatedOrder.LastModifiedById.Should().Be(orderResource.ModifiedById);
-
-            var updatedOrderItem = updatedOrder.OrderItems.First(o => o.Id == 1);
-            var updatedOrderItemResource = orderResource.OrderItems.First(o => o.Id == 1);
-
-            updatedOrderItem.LastModifiedById.Should().Be(updatedOrderItemResource.ModifiedById);
-            updatedOrderItem.Quantity.Should().Be(updatedOrderItemResource.Quantity);
-
-            //Comparing with before updating
-            updatedOrder.Id.Should().Be(orderBeforeUpdating.Id);
-            updatedOrder.CreatedByUsername.Should().Be(orderBeforeUpdating.CreatedByUsername);
-            updatedOrder.CreatedById.Should().Be(orderBeforeUpdating.CreatedById);
-            updatedOrder.CreatedOn.Should().Be(orderBeforeUpdating.CreatedOn);
         }
     }
 }

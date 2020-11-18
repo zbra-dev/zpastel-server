@@ -22,5 +22,29 @@
     "CreatedOn": "2020-10-13T17:06:53.898Z",
     "LastModifiedById": 1,
     "LastModifiedOn": "2020-10-13T17:06:53.898Z"
+  },
+  {
+    "Id": 3,
+    "PasteleiroId": 1,
+    "IsAvailable": true,
+    "Ingredients": "Camarao fresco",
+    "Name": "Camarao",
+    "Price": 8.00,
+    "CreatedById": 1,
+    "CreatedOn": "2020-10-13T17:06:53.898Z",
+    "LastModifiedById": 1,
+    "LastModifiedOn": "2020-10-13T17:06:53.898Z"
+  },
+  {
+    "Id": 4,
+    "PasteleiroId": 1,
+    "IsAvailable": true,
+    "Ingredients": "Doce de leite",
+    "Name": "Doce de leite",
+    "Price": 8.00,
+    "CreatedById": 1,
+    "CreatedOn": "2020-10-13T17:06:53.898Z",
+    "LastModifiedById": 1,
+    "LastModifiedOn": "2020-10-13T17:06:53.898Z"
   }
 ]
