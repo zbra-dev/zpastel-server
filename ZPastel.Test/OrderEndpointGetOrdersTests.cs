@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Xunit;
 using ZPastel.API.Resources;
 using ZPastel.Test.Builders;
+using ZPastel.Test.Extensions;
 using ZPastel.Tests;
 
 namespace ZPastel.Test
@@ -33,8 +34,7 @@ namespace ZPastel.Test
             var response = await client.GetAsync("api/orders");
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            var ordersContent = await response.Content.ReadAsStringAsync();
-            var orders = Newtonsoft.Json.JsonConvert.DeserializeObject<IReadOnlyCollection<OrderResource>>(ordersContent);
+            var orders = await response.Deserialize<IReadOnlyCollection<OrderResource>>();
 
             orders.Count.Should().Be(2);
 
@@ -97,8 +97,7 @@ namespace ZPastel.Test
             var response = await client.GetAsync("api/orders/2");
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            var ordersContent = await response.Content.ReadAsStringAsync();
-            var order = Newtonsoft.Json.JsonConvert.DeserializeObject<OrderResource>(ordersContent);
+            var order = await response.Deserialize<OrderResource>();
 
             order.Should().NotBeNull();
             order.Id.Should().Be(2);
@@ -126,59 +125,6 @@ namespace ZPastel.Test
         {
             var response = await client.GetAsync("api/orders/0");
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
-        }
-
-        [Fact]
-        public async Task CreateOrder_WithValidOrderResource_ShouldCreateOrder()
-        {
-            var body = new OrderResourceBuilder()
-                .WithDefaultValues()
-                .Build();
-
-            var getResponse = await client.GetAsync("api/orders");
-            getResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-
-            var ordersContent = await getResponse.Content.ReadAsStringAsync();
-            var orders = Newtonsoft.Json.JsonConvert.DeserializeObject<IReadOnlyCollection<OrderResource>>(ordersContent);
-
-            orders.Count.Should().Be(2);
-
-            var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
-
-            var postResponse = await client.PostAsync("api/orders/create", content);
-            postResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-
-            var createdOrderResponse = await postResponse.Content.ReadAsStringAsync();
-            var createdOrder = Newtonsoft.Json.JsonConvert.DeserializeObject<OrderResource>(createdOrderResponse);
-
-            createdOrder.CreatedById.Should().Be(body.CreatedById);
-            createdOrder.CreatedByUsername.Should().Be(body.CreatedByUsername);
-            createdOrder.CreatedOn.Should().BeAfter(DateTime.MinValue);
-            createdOrder.LastModifiedById.Should().Be(body.CreatedById);
-            createdOrder.LastModifiedOn.Should().BeAfter(DateTime.MinValue);
-            createdOrder.TotalPrice.Should().Be(body.TotalPrice);
-            createdOrder.OrderItems.Count.Should().Be(body.OrderItems.Count);
-            createdOrder.Id.Should().BeGreaterThan(0);
-
-            var orderItemFromCreatedOrder = createdOrder.OrderItems.First();
-            var orderItemFromBody = body.OrderItems.First();
-
-            orderItemFromCreatedOrder.CreatedById.Should().Be(orderItemFromBody.CreatedById);
-            orderItemFromCreatedOrder.Ingredients.Should().Be(orderItemFromBody.Ingredients);
-            orderItemFromCreatedOrder.PastelId.Should().Be(orderItemFromBody.PastelId);
-            orderItemFromCreatedOrder.Price.Should().Be(orderItemFromBody.Price);
-            orderItemFromCreatedOrder.Quantity.Should().Be(orderItemFromBody.Quantity);
-            orderItemFromCreatedOrder.Name.Should().Be(orderItemFromBody.Name);
-            orderItemFromCreatedOrder.OrderId.Should().Be(createdOrder.Id);
-            orderItemFromCreatedOrder.Id.Should().BeGreaterThan(0);
-
-            getResponse = await client.GetAsync("api/orders");
-            getResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-
-            ordersContent = await getResponse.Content.ReadAsStringAsync();
-            orders = Newtonsoft.Json.JsonConvert.DeserializeObject<IReadOnlyCollection<OrderResource>>(ordersContent);
-
-            orders.Count.Should().Be(3);
         }
     }
 }

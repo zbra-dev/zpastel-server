@@ -1,6 +1,8 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -9,6 +11,7 @@ using System.Threading.Tasks;
 using Xunit;
 using ZPastel.API.Resources;
 using ZPastel.Test.Builders;
+using ZPastel.Test.Extensions;
 using ZPastel.Tests;
 
 namespace ZPastel.Test
@@ -22,6 +25,56 @@ namespace ZPastel.Test
         {
             factory = new CustomWebApplicationFactory();
             client = factory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
+        }
+
+        [Fact]
+        public async Task CreateOrder_WithValidOrderResource_ShouldCreateOrder()
+        {
+            var body = new OrderResourceBuilder()
+                .WithDefaultValues()
+                .Build();
+
+            var getResponse = await client.GetAsync("api/orders");
+            getResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var orders = await getResponse.Deserialize<IReadOnlyCollection<OrderResource>>();
+
+            orders.Count.Should().Be(2);
+
+            var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
+
+            var postResponse = await client.PostAsync("api/orders/create", content);
+            postResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var createdOrder = await postResponse.Deserialize<OrderResource>();
+
+            createdOrder.CreatedById.Should().Be(body.CreatedById);
+            createdOrder.CreatedByUsername.Should().Be(body.CreatedByUsername);
+            createdOrder.CreatedOn.Should().BeAfter(DateTime.MinValue);
+            createdOrder.LastModifiedById.Should().Be(body.CreatedById);
+            createdOrder.LastModifiedOn.Should().BeAfter(DateTime.MinValue);
+            createdOrder.TotalPrice.Should().Be(body.TotalPrice);
+            createdOrder.OrderItems.Count.Should().Be(body.OrderItems.Count);
+            createdOrder.Id.Should().BeGreaterThan(0);
+
+            var orderItemFromCreatedOrder = createdOrder.OrderItems.First();
+            var orderItemFromBody = body.OrderItems.First();
+
+            orderItemFromCreatedOrder.CreatedById.Should().Be(orderItemFromBody.CreatedById);
+            orderItemFromCreatedOrder.Ingredients.Should().Be(orderItemFromBody.Ingredients);
+            orderItemFromCreatedOrder.PastelId.Should().Be(orderItemFromBody.PastelId);
+            orderItemFromCreatedOrder.Price.Should().Be(orderItemFromBody.Price);
+            orderItemFromCreatedOrder.Quantity.Should().Be(orderItemFromBody.Quantity);
+            orderItemFromCreatedOrder.Name.Should().Be(orderItemFromBody.Name);
+            orderItemFromCreatedOrder.OrderId.Should().Be(createdOrder.Id);
+            orderItemFromCreatedOrder.Id.Should().BeGreaterThan(0);
+
+            getResponse = await client.GetAsync("api/orders");
+            getResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            orders = await getResponse.Deserialize<IReadOnlyCollection<OrderResource>>();
+
+            orders.Count.Should().Be(3);
         }
 
         [Fact]
