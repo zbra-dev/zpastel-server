@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 using ZPastel.API.Resources;
+using ZPastel.Test.Extensions;
 using ZPastel.Tests;
 
 namespace ZPastel.Test
@@ -26,9 +27,7 @@ namespace ZPastel.Test
             var response = await client.GetAsync("api/pasteis");
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            var pasteisContent = await response.Content.ReadAsStringAsync();
-            var pasteis = Newtonsoft.Json.JsonConvert.DeserializeObject<IReadOnlyCollection<PastelResource>>(pasteisContent);
-            //TODO: Assert the 2 new pasteis
+            var pasteis = await response.Deserialize<IReadOnlyCollection<PastelResource>>();
             pasteis.Count.Should().Be(4);
 
             var firstPastel = pasteis.First();
@@ -48,6 +47,24 @@ namespace ZPastel.Test
             secondPastel.Price.Should().Be(4.50m);
             secondPastel.CreatedById.Should().Be(1);
             secondPastel.LastModifiedById.Should().Be(1);
+
+            var thirdPastel = pasteis.Skip(2).First();
+
+            thirdPastel.Id.Should().Be(3);
+            thirdPastel.Name.Should().Be("Camarao");
+            thirdPastel.Ingredients.Should().Be("Camarao fresco");
+            thirdPastel.Price.Should().Be(8.00m);
+            thirdPastel.CreatedById.Should().Be(1);
+            thirdPastel.LastModifiedById.Should().Be(1);
+
+            var fourthPastel = pasteis.Skip(3).First();
+
+            fourthPastel.Id.Should().Be(4);
+            fourthPastel.Name.Should().Be("Doce de leite");
+            fourthPastel.Ingredients.Should().Be("Doce de leite");
+            fourthPastel.Price.Should().Be(8.00m);
+            fourthPastel.CreatedById.Should().Be(1);
+            fourthPastel.LastModifiedById.Should().Be(1);
         }
 
         private HttpClient GetClient()

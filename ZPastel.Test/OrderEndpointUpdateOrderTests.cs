@@ -11,43 +11,43 @@ using Xunit;
 using ZPastel.API.Resources;
 using ZPastel.Test.Builders;
 using ZPastel.Test.Converters;
+using ZPastel.Test.Extensions;
+using ZPastel.Test.Utils;
 using ZPastel.Tests;
 
 namespace ZPastel.Test
 {
-    public class OrderEndpointUpdateTests
+    public class OrderEndpointUpdateOrderTests
     {
         private readonly CustomWebApplicationFactory factory;
         private readonly HttpClient client;
 
-        public OrderEndpointUpdateTests()
+        public OrderEndpointUpdateOrderTests()
         {
             factory = new CustomWebApplicationFactory();
             client = factory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
         }
 
-        //TODO: separate tests into different classes (create, update, delete...)
         [Fact]
         public async Task UpdateOrder_WithValidId_ShouldUpdateOrder()
         {
-            var orderResource = new UpdateOrderResourceBuilder()
+            var updateOrderResource = new UpdateOrderResourceBuilder()
                 .WithDefaultValues()
                 .Build();
 
             var orderBeforeUpdating = await GetOrder(1);
-            await UpdateOrder(1, orderResource);
+            await UpdateOrder(1, updateOrderResource);
             var updatedOrder = await GetOrder(1);
 
-            updatedOrder.TotalPrice.Should().Be(orderResource.TotalPrice);
-            updatedOrder.LastModifiedById.Should().Be(orderResource.ModifiedById);
+            updatedOrder.TotalPrice.Should().Be(updateOrderResource.TotalPrice);
+            updatedOrder.LastModifiedById.Should().Be(updateOrderResource.ModifiedById);
 
             var updatedOrderItem = updatedOrder.OrderItems.First(o => o.Id == 1);
-            var updatedOrderItemResource = orderResource.OrderItems.First(o => o.Id == 1);
+            var updatedOrderItemResource = updateOrderResource.OrderItems.First(o => o.Id == 1);
 
             updatedOrderItem.LastModifiedById.Should().Be(updatedOrderItemResource.LastModifiedById);
             updatedOrderItem.Quantity.Should().Be(updatedOrderItemResource.Quantity);
 
-            //Comparing with before updating
             updatedOrder.Id.Should().Be(orderBeforeUpdating.Id);
             updatedOrder.CreatedByUsername.Should().Be(orderBeforeUpdating.CreatedByUsername);
             updatedOrder.CreatedById.Should().Be(orderBeforeUpdating.CreatedById);
@@ -58,13 +58,12 @@ namespace ZPastel.Test
         {
             var response = await client.GetAsync($"api/orders/{id}");
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            var orderContent = await response.Content.ReadAsStringAsync();
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<OrderResource>(orderContent);
+            return await response.Deserialize<OrderResource>();
         }
 
         private async Task UpdateOrder(long id, UpdateOrderResource orderResource)
         {
-            var content = new StringContent(JsonSerializer.Serialize(orderResource), Encoding.UTF8, "application/json");
+            var content = SerializeUtils.Serialize(orderResource);
             var response = await client.PutAsync($"api/orders/edit/{id}", content);
             response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
@@ -94,7 +93,7 @@ namespace ZPastel.Test
                 Quantity = 2
             };
 
-            var orderResource = new UpdateOrderResourceBuilder()
+            var updateOrderResource = new UpdateOrderResourceBuilder()
                 .WithTotalPrice(2m)
                 .WithOrderItems(new List<UpdateOrderItemResource> 
                 { 
@@ -105,7 +104,60 @@ namespace ZPastel.Test
                 .Build();
 
             var orderBeforeUpdating = await GetOrder(1);
-            //Should not delete previous OrderItems
+            //Should not delete previous OrderItems, so we add them to the orderResource
+            var converter = new UpdateOrderItemResourceConverter();
+            foreach (var orderItem in orderBeforeUpdating.OrderItems)
+            {
+                updateOrderResource.OrderItems.Add(converter.ConvertToUpdateItemResource(orderItem));
+            }
+
+            await UpdateOrder(1, updateOrderResource);
+            var updatedOrder = await GetOrder(1);
+
+            updatedOrder.TotalPrice.Should().Be(updateOrderResource.TotalPrice);
+            updatedOrder.LastModifiedById.Should().Be(updateOrderResource.ModifiedById);
+            updatedOrder.OrderItems.Count.Should().Be(updateOrderResource.OrderItems.Count);
+            
+            var firstAddedOrderItem = updatedOrder.OrderItems
+                .Single(o => o.PastelId == firstOrderItemResource.PastelId);
+            firstAddedOrderItem.Ingredients.Should().Be(firstOrderItemResource.Ingredients);
+            firstAddedOrderItem.Name.Should().Be(firstOrderItemResource.Name);
+            firstAddedOrderItem.PastelId.Should().Be(firstOrderItemResource.PastelId);
+            firstAddedOrderItem.Price.Should().Be(firstOrderItemResource.Price);
+            firstAddedOrderItem.Quantity.Should().Be(firstOrderItemResource.Quantity);
+            firstAddedOrderItem.CreatedById.Should().Be(updateOrderResource.ModifiedById);
+            firstAddedOrderItem.LastModifiedById.Should().Be(updateOrderResource.ModifiedById);
+
+            var secondAddedOrderItem = updatedOrder.OrderItems
+                .Single(o => o.PastelId == secondOrderItemResource.PastelId);
+            secondAddedOrderItem.Ingredients.Should().Be(secondOrderItemResource.Ingredients);
+            secondAddedOrderItem.Name.Should().Be(secondOrderItemResource.Name);
+            secondAddedOrderItem.PastelId.Should().Be(secondOrderItemResource.PastelId);
+            secondAddedOrderItem.Price.Should().Be(secondOrderItemResource.Price);
+            secondAddedOrderItem.Quantity.Should().Be(secondOrderItemResource.Quantity);
+            secondAddedOrderItem.CreatedById.Should().Be(updateOrderResource.ModifiedById);
+            secondAddedOrderItem.LastModifiedById.Should().Be(updateOrderResource.ModifiedById);
+        }
+
+        private async Task<IReadOnlyCollection<PastelResource>> GetPasteis()
+        {
+            var response = await client.GetAsync("api/pasteis");
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            return await response.Deserialize<IReadOnlyCollection<PastelResource>>();
+        }
+
+        [Fact]
+        public async Task UpdateOrder_WithValidIdAndDeletingNewOrderItems_ShouldUpdateOrder()
+        {
+            var orderBeforeUpdating = await GetOrder(1);
+            var orderItemToBeRemoved = orderBeforeUpdating.OrderItems.First();
+            orderBeforeUpdating.OrderItems.Remove(orderItemToBeRemoved);
+
+            var orderResource = new UpdateOrderResourceBuilder()
+                .WithTotalPrice(2m)
+                .WithModifiedById(2)
+                .Build();
+
             var converter = new UpdateOrderItemResourceConverter();
             foreach (var orderItem in orderBeforeUpdating.OrderItems)
             {
@@ -118,33 +170,12 @@ namespace ZPastel.Test
             updatedOrder.TotalPrice.Should().Be(orderResource.TotalPrice);
             updatedOrder.LastModifiedById.Should().Be(orderResource.ModifiedById);
             updatedOrder.OrderItems.Count.Should().Be(orderResource.OrderItems.Count);
-            
-            var firstAddedOrderItem = updatedOrder.OrderItems.Single(o => o.PastelId == pastelCamarao.Id);
-            firstAddedOrderItem.Ingredients.Should().Be(firstOrderItemResource.Ingredients);
-            firstAddedOrderItem.Name.Should().Be(firstOrderItemResource.Name);
-            firstAddedOrderItem.PastelId.Should().Be(firstOrderItemResource.PastelId);
-            firstAddedOrderItem.Price.Should().Be(firstOrderItemResource.Price);
-            firstAddedOrderItem.Quantity.Should().Be(firstOrderItemResource.Quantity);
-            firstAddedOrderItem.CreatedById.Should().Be(orderResource.ModifiedById);
-            firstAddedOrderItem.LastModifiedById.Should().Be(orderResource.ModifiedById);
+            updatedOrder.OrderItems.Should().NotContain(o => o.Id == orderItemToBeRemoved.Id);
 
-            var secondAddedOrderItem = updatedOrder.OrderItems.Single(o => o.PastelId == pastelDoceDeLeite.Id);
-            secondAddedOrderItem.Ingredients.Should().Be(secondOrderItemResource.Ingredients);
-            secondAddedOrderItem.Name.Should().Be(secondOrderItemResource.Name);
-            secondAddedOrderItem.PastelId.Should().Be(secondOrderItemResource.PastelId);
-            secondAddedOrderItem.Price.Should().Be(secondOrderItemResource.Price);
-            secondAddedOrderItem.Quantity.Should().Be(secondOrderItemResource.Quantity);
-            secondAddedOrderItem.CreatedById.Should().Be(orderResource.ModifiedById);
-            secondAddedOrderItem.LastModifiedById.Should().Be(orderResource.ModifiedById);
-        }
-
-        private async Task<IReadOnlyCollection<PastelResource>> GetPasteis()
-        {
-            var response = await client.GetAsync("api/pasteis");
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-
-            var pasteisContent = await response.Content.ReadAsStringAsync();
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<IReadOnlyCollection<PastelResource>>(pasteisContent);
+            foreach (var orderItem in orderBeforeUpdating.OrderItems)
+            {
+                updatedOrder.OrderItems.Should().Contain(o => o.Id == orderItem.Id);
+            }
         }
     }
 }

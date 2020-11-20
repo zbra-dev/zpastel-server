@@ -87,15 +87,16 @@ namespace ZPastel.Service.Impl
                 }
             }
 
+            var orderItemsTobeDeleted = new List<OrderItem>();
             foreach (var persistedOrderItemKeyValuePair in persistedOrderItemsMapping)
             {
                 if (!orderItemsNotToBeDeletedMapping.ContainsKey(persistedOrderItemKeyValuePair.Key))
                 {
-                    persistedOrder.OrderItems.Remove(persistedOrderItemKeyValuePair.Value);
+                    orderItemsTobeDeleted.Add(persistedOrderItemKeyValuePair.Value);
                 }
             }
 
-            await orderRepository.UpdateOrder(persistedOrder);
+            await orderRepository.UpdateOrder(persistedOrder, orderItemsTobeDeleted);
         }
 
         public async Task<IReadOnlyList<Order>> FindAll()

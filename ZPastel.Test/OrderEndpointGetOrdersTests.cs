@@ -15,13 +15,12 @@ using ZPastel.Tests;
 
 namespace ZPastel.Test
 {
-    public class OrderEndpointTests
+    public class OrderEndpointGetOrdersTests
     {
         private readonly CustomWebApplicationFactory factory;
-        //TODO: use this newly created field in every test
         private readonly HttpClient client;
 
-        public OrderEndpointTests()
+        public OrderEndpointGetOrdersTests()
         {
             factory = new CustomWebApplicationFactory();
             client = factory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
@@ -31,7 +30,6 @@ namespace ZPastel.Test
         public async Task GetOrders_AllOrders_ShouldReturnAllOrders()
         {
             //TODO: Use an extension method (e.g. response.Deserialize) to make this code cleaner. Update every test
-            var client = GetClient();
             var response = await client.GetAsync("api/orders");
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
@@ -93,15 +91,9 @@ namespace ZPastel.Test
             firstOrderItemFromSecondOrder.Quantity.Should().Be(4);
         }
 
-        private HttpClient GetClient()
-        {
-            return factory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
-        }
-
         [Fact]
         public async Task GetOrderById_WithValidId_ShouldReturnCorrectOrder()
         {
-            var client = GetClient();
             var response = await client.GetAsync("api/orders/2");
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
@@ -132,7 +124,6 @@ namespace ZPastel.Test
         [Fact]
         public async Task GetOrderById_WithInvalidId_ResponseStatusCodeShouldBeNotFound()
         {
-            var client = GetClient();
             var response = await client.GetAsync("api/orders/0");
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
@@ -144,7 +135,6 @@ namespace ZPastel.Test
                 .WithDefaultValues()
                 .Build();
 
-            var client = GetClient();
             var getResponse = await client.GetAsync("api/orders");
             getResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
@@ -189,218 +179,6 @@ namespace ZPastel.Test
             orders = Newtonsoft.Json.JsonConvert.DeserializeObject<IReadOnlyCollection<OrderResource>>(ordersContent);
 
             orders.Count.Should().Be(3);
-        }
-
-        [Fact]
-        public async Task CreateOrder_WithUserIdNotFound_ResponseStatusCodeShouldBeNotFound()
-        {
-            var body = new OrderResourceBuilder()
-               .WithDefaultValues()
-               .WithCreatedById(3)
-               .Build();
-
-            var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
-
-            var client = GetClient();
-            var postResponse = await client.PostAsync("api/orders/create", content);
-            postResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
-        }
-
-        [Fact]
-        public async Task CreateOrder_WithNegativeTotalPrice_ResponseStatusCodeShouldBeBadRequest()
-        {
-            var body = new OrderResourceBuilder()
-               .WithDefaultValues()
-               .WithTotalPrice(-2)
-               .Build();
-
-            var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
-
-            var client = GetClient();
-            var postResponse = await client.PostAsync("api/orders/create", content);
-            postResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        }
-
-        [Fact]
-        public async Task CreateOrder_WithEmptyCreatedByUsername_ResponseStatusCodeShouldBeBadRequest()
-        {
-            var body = new OrderResourceBuilder()
-               .WithDefaultValues()
-               .WithCreatedByUsername(string.Empty)
-               .Build();
-
-            var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
-
-            var client = GetClient();
-            var postResponse = await client.PostAsync("api/orders/create", content);
-            postResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        }
-
-        [Fact]
-        public async Task CreateOrder_WithEmptyOrderItemsList_ResponseStatusCodeShouldBeBadRequest()
-        {
-            var body = new OrderResourceBuilder()
-               .WithDefaultValues()
-               .WithOrderItems(new List<OrderItemResource>())
-               .Build();
-
-            var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
-
-            var client = GetClient();
-            var postResponse = await client.PostAsync("api/orders/create", content);
-            postResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        }
-
-        [Fact]
-        public async Task CreateOrder_WithUserIdNotFoundInOrderItem_ResponseStatusCodeShouldBeNotFound()
-        {
-            var orderItemResource = new OrderItemResource
-            {
-                CreatedById = 3,
-                Ingredients = "Quejo",
-                Name = "Pastel de Queijo",
-                PastelId = 1,
-                Price = 4,
-                Quantity = 1
-            };
-
-            var body = new OrderResourceBuilder()
-               .WithDefaultValues()
-               .WithOrderItems(new[] { orderItemResource })
-               .Build();
-
-            var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
-
-            var client = GetClient();
-            var postResponse = await client.PostAsync("api/orders/create", content);
-            postResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
-        }
-
-        [Fact]
-        public async Task CreateOrder_WithEmptyIngredientsInOrderItem_ResponseStatusCodeShouldBeBadRequest()
-        {
-            var orderItemResource = new OrderItemResource
-            {
-                CreatedById = 1,
-                Ingredients = string.Empty,
-                Name = "Pastel de Queijo",
-                PastelId = 1,
-                Price = 4,
-                Quantity = 1
-            };
-
-            var body = new OrderResourceBuilder()
-               .WithDefaultValues()
-               .WithOrderItems(new[] { orderItemResource })
-               .Build();
-
-            var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
-
-            var client = GetClient();
-            var postResponse = await client.PostAsync("api/orders/create", content);
-            postResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        }
-
-        [Fact]
-        public async Task CreateOrder_WithEmptyNameInOrderItem_ResponseStatusCodeShouldBeBadRequest()
-        {
-            var orderItemResource = new OrderItemResource
-            {
-                CreatedById = 1,
-                Ingredients = "Queijo",
-                Name = string.Empty,
-                PastelId = 1,
-                Price = 4,
-                Quantity = 1
-            };
-
-            var body = new OrderResourceBuilder()
-               .WithDefaultValues()
-               .WithOrderItems(new[] { orderItemResource })
-               .Build();
-
-            var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
-
-            var client = GetClient();
-            var postResponse = await client.PostAsync("api/orders/create", content);
-            postResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        }
-
-        [Fact]
-        public async Task CreateOrder_WithPastelIdNotFoundInOrderItem_ResponseStatusCodeShouldBeNotFound()
-        {
-            var orderItemResource = new OrderItemResource
-            {
-                CreatedById = 1,
-                Ingredients = "Queijo",
-                Name = "Pastel de Queijo",
-                PastelId = 100,
-                Price = 4,
-                Quantity = 1
-            };
-
-            var body = new OrderResourceBuilder()
-               .WithDefaultValues()
-               .WithOrderItems(new[] { orderItemResource })
-               .Build();
-
-            var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
-
-            var client = GetClient();
-            var postResponse = await client.PostAsync("api/orders/create", content);
-            postResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
-        }
-
-        [Fact]
-        public async Task CreateOrder_WithNegativePriceInOrderItem_ResponseStatusCodeShouldBeBadRequest()
-        {
-            var orderItemResource = new OrderItemResource
-            {
-                CreatedById = 1,
-                Ingredients = "Queijo",
-                Name = "Pastel de Queijo",
-                PastelId = 1,
-                Price = -4,
-                Quantity = 1
-            };
-
-            var body = new OrderResourceBuilder()
-               .WithDefaultValues()
-               .WithOrderItems(new[] { orderItemResource })
-               .Build();
-
-            var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
-
-            var client = GetClient();
-            var postResponse = await client.PostAsync("api/orders/create", content);
-            postResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        }
-
-        [Theory]
-        [InlineData(-1)]
-        [InlineData(0)]
-        public async Task CreateOrder_WithNegativeAndZeroQuantityInOrderItem_ResponseStatusCodeShouldBeBadRequest(int quantity)
-        {
-            var orderItemResource = new OrderItemResource
-            {
-                CreatedById = 1,
-                Ingredients = "Queijo",
-                Name = "Pastel de Queijo",
-                PastelId = 1,
-                Price = 4,
-                Quantity = quantity
-            };
-
-            var body = new OrderResourceBuilder()
-               .WithDefaultValues()
-               .WithOrderItems(new[] { orderItemResource })
-               .Build();
-
-            var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
-
-            var client = GetClient();
-            var postResponse = await client.PostAsync("api/orders/create", content);
-            postResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
     }
 }

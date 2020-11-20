@@ -34,10 +34,16 @@ namespace ZPastel.Persistence.Impl
             return order;
         }
 
-        public async Task UpdateOrder(Order order)
+        public async Task UpdateOrder(Order order, IList<OrderItem> ordersItemsToBeDeleted)
         {
             SetOrderToOrderItems(order);
             dataContext.Update(order);
+
+            foreach (var orderItem in ordersItemsToBeDeleted)
+            {
+                dataContext.Remove(orderItem);
+            }
+
             await dataContext.SaveChangesAsync();
         }
 
