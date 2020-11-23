@@ -61,9 +61,10 @@ namespace ZPastel.Service.Impl
             var orderItemsNotToBeDeletedMapping = new Dictionary<long, OrderItem>();
 
             var persistedOrderItemsMapping = persistedOrder.OrderItems.ToDictionary(o => o.Id);
+            long newId = 0;
             foreach(var updatedOrderItem in updateOrder.UpdateOrderItems)
             {
-                if (updatedOrderItem.Id != 0)
+                if (updatedOrderItem.Id != newId)
                 {
                     orderItemsNotToBeDeletedMapping.Add(updatedOrderItem.Id, updatedOrderItem);
                 }
@@ -87,16 +88,16 @@ namespace ZPastel.Service.Impl
                 }
             }
 
-            var orderItemsTobeDeleted = new List<OrderItem>();
+            var orderItemsToBeDeleted = new List<OrderItem>();
             foreach (var persistedOrderItemKeyValuePair in persistedOrderItemsMapping)
             {
                 if (!orderItemsNotToBeDeletedMapping.ContainsKey(persistedOrderItemKeyValuePair.Key))
                 {
-                    orderItemsTobeDeleted.Add(persistedOrderItemKeyValuePair.Value);
+                    orderItemsToBeDeleted.Add(persistedOrderItemKeyValuePair.Value);
                 }
             }
 
-            await orderRepository.UpdateOrder(persistedOrder, orderItemsTobeDeleted);
+            await orderRepository.UpdateOrder(persistedOrder, orderItemsToBeDeleted);
         }
 
         public async Task<IReadOnlyList<Order>> FindAll()

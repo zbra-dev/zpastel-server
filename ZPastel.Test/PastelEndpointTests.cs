@@ -6,8 +6,8 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
+using ZPastel.API.Extensions;
 using ZPastel.API.Resources;
-using ZPastel.Test.Extensions;
 using ZPastel.Tests;
 
 namespace ZPastel.Test

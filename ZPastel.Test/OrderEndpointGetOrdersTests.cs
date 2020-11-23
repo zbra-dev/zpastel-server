@@ -1,17 +1,13 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
+using ZPastel.API.Extensions;
 using ZPastel.API.Resources;
-using ZPastel.Test.Builders;
-using ZPastel.Test.Extensions;
 using ZPastel.Tests;
 
 namespace ZPastel.Test
@@ -30,7 +26,6 @@ namespace ZPastel.Test
         [Fact]
         public async Task GetOrders_AllOrders_ShouldReturnAllOrders()
         {
-            //TODO: Use an extension method (e.g. response.Deserialize) to make this code cleaner. Update every test
             var response = await client.GetAsync("api/orders");
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 

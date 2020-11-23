@@ -5,13 +5,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
+using ZPastel.API.Extensions;
 using ZPastel.API.Resources;
 using ZPastel.Test.Builders;
-using ZPastel.Test.Extensions;
 using ZPastel.Tests;
 
 namespace ZPastel.Test
@@ -41,7 +39,7 @@ namespace ZPastel.Test
 
             orders.Count.Should().Be(2);
 
-            var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
+            var content = body.SerializeHttpRequestData();
 
             var postResponse = await client.PostAsync("api/orders/create", content);
             postResponse.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -85,7 +83,7 @@ namespace ZPastel.Test
                .WithCreatedById(3)
                .Build();
 
-            var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
+            var content = body.SerializeHttpRequestData();
 
             var postResponse = await client.PostAsync("api/orders/create", content);
             postResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -99,7 +97,7 @@ namespace ZPastel.Test
                .WithTotalPrice(-2)
                .Build();
 
-            var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
+            var content = body.SerializeHttpRequestData();
 
             var postResponse = await client.PostAsync("api/orders/create", content);
             postResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -113,7 +111,7 @@ namespace ZPastel.Test
                .WithCreatedByUsername(string.Empty)
                .Build();
 
-            var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
+            var content = body.SerializeHttpRequestData();
 
             var postResponse = await client.PostAsync("api/orders/create", content);
             postResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -127,7 +125,7 @@ namespace ZPastel.Test
                .WithOrderItems(new List<OrderItemResource>())
                .Build();
 
-            var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
+            var content = body.SerializeHttpRequestData();
 
             var postResponse = await client.PostAsync("api/orders/create", content);
             postResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -151,7 +149,7 @@ namespace ZPastel.Test
                .WithOrderItems(new[] { orderItemResource })
                .Build();
 
-            var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
+            var content = body.SerializeHttpRequestData();
 
             var postResponse = await client.PostAsync("api/orders/create", content);
             postResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -175,7 +173,7 @@ namespace ZPastel.Test
                .WithOrderItems(new[] { orderItemResource })
                .Build();
 
-            var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
+            var content = body.SerializeHttpRequestData();
 
             var postResponse = await client.PostAsync("api/orders/create", content);
             postResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -199,9 +197,8 @@ namespace ZPastel.Test
                .WithOrderItems(new[] { orderItemResource })
                .Build();
 
-            var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
+            var content = body.SerializeHttpRequestData();
 
-            
             var postResponse = await client.PostAsync("api/orders/create", content);
             postResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
@@ -224,7 +221,7 @@ namespace ZPastel.Test
                .WithOrderItems(new[] { orderItemResource })
                .Build();
 
-            var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
+            var content = body.SerializeHttpRequestData();
 
             var postResponse = await client.PostAsync("api/orders/create", content);
             postResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -248,7 +245,7 @@ namespace ZPastel.Test
                .WithOrderItems(new[] { orderItemResource })
                .Build();
 
-            var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
+            var content = body.SerializeHttpRequestData();
 
             var postResponse = await client.PostAsync("api/orders/create", content);
             postResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -274,7 +271,7 @@ namespace ZPastel.Test
                .WithOrderItems(new[] { orderItemResource })
                .Build();
 
-            var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
+            var content = body.SerializeHttpRequestData();
 
             var postResponse = await client.PostAsync("api/orders/create", content);
             postResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);

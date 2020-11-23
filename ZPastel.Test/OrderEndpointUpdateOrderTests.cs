@@ -6,11 +6,10 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
+using ZPastel.API.Extensions;
 using ZPastel.API.Resources;
 using ZPastel.Test.Builders;
 using ZPastel.Test.Converters;
-using ZPastel.Test.Extensions;
-using ZPastel.Test.Utils;
 using ZPastel.Tests;
 
 namespace ZPastel.Test
@@ -61,7 +60,7 @@ namespace ZPastel.Test
 
         private async Task UpdateOrder(long id, UpdateOrderResource orderResource)
         {
-            var content = SerializeUtils.Serialize(orderResource);
+            var content = orderResource.SerializeHttpRequestData();
             var response = await client.PutAsync($"api/orders/edit/{id}", content);
             response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
