@@ -25,6 +25,7 @@ namespace ZPastel.Test
             client = factory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
         }
 
+        //TODO: Update two or more OrderItems in 'WithValidId' and 'WithValidIdAndDeletingNewOrderItems' scenarios
         [Fact]
         public async Task UpdateOrder_WithValidId_ShouldUpdateOrder()
         {

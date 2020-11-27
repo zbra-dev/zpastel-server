@@ -18,5 +18,24 @@ namespace ZPastel.Model
         public DateTime CreatedOn { get; set; }
         public long LastModifiedById { get; set; }
         public DateTime LastModifiedOn { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as OrderItem;
+            if (other == null)
+            {
+                return false;
+            }
+
+            return other.Id == Id;
+        }
+
+        public override int GetHashCode()
+        {
+            var hash = 3;
+            hash = hash + 17 * Id.GetHashCode();
+
+            return hash;
+        }
     }
 }

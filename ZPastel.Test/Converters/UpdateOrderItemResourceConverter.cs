@@ -2,7 +2,7 @@
 
 namespace ZPastel.Test.Converters
 {
-    class UpdateOrderItemResourceConverter
+    internal class UpdateOrderItemResourceConverter
     {
         public UpdateOrderItemResource ConvertToUpdateItemResource(OrderItemResource orderItemResource)
         {
