@@ -1,13 +1,12 @@
 ﻿using System.Threading.Tasks;
 using ZPastel.Model;
 
-namespace ZPastel.Core.Repositories
+namespace ZPastel.Service.Contract
 {
-    public interface IUserRepository
+    public interface IUserService
     {
         Task<User> FindByFirebaseId(string firebaseId);
         Task<User> FindById(long id);
-        Task<User> CreateUser(User user);
-        Task<User> UpdateUser(User user);
+        Task<User> Save(User user);
     }
 }

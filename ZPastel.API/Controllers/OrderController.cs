@@ -54,10 +54,10 @@ namespace ZPastel.API.Controllers
             return Ok(allOrdersResource);
         }
 
-        [HttpGet("{id}", Name = nameof(FindById))]
+        [HttpGet("{id}", Name = nameof(FindOrderById))]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<OrderResource>> FindById(long id)
+        public async Task<ActionResult<OrderResource>> FindOrderById(long id)
         {
             var foundOrder = await orderService.FindById(id);
 

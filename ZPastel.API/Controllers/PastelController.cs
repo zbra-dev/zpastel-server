@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ZPastel.API.Converters;
 using ZPastel.API.Resources;
-using ZPastel.Model;
 using ZPastel.Service.Contract;
 
 namespace ZPastel.API.Controllers
