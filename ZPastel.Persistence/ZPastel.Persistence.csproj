@@ -19,7 +19,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ZPastel.Persistence.API\ZPastel.Persistence.API.csproj" />
-    <ProjectReference Include="..\ZPastel.Service.API\ZPastel.Service.API.csproj" />
     <ProjectReference Include="..\ZPastel.Model\ZPastel.Model.csproj" />
   </ItemGroup>
 
