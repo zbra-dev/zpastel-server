@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using ZPastel.Model;
 
-namespace ZPastel.Core.Repositories
+namespace ZPastel.Persistence.API.Repositories
 {
     public interface IPastelRepository
     {

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using ZPastel.Core.Repositories;
 using ZPastel.Model;
-using ZPastel.Service.Contract;
+using ZPastel.Persistence.API.Repositories;
+using ZPastel.Service.API.Contract;
 
 namespace ZPastel.Service.Impl
 {

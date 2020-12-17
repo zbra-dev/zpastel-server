@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ZPastel.Core.Repositories;
 using ZPastel.Model;
+using ZPastel.Persistence.API.Repositories;
 
 namespace ZPastel.Persistence.Impl
 {

@@ -2,15 +2,14 @@
 using System.Threading.Tasks;
 using ZPastel.Model;
 
-namespace ZPastel.Service.Contract
+namespace ZPastel.Persistence.API.Repositories
 {
-    public interface IOrderService
+    public interface IOrderRepository
     {
-        Task<Order> CreateOrder(Order createOrderCommand);
-        Task DeleteOrder(long id);
+        Task<Order> CreateOrder(Order order);
+        Task DeleteOrder(Order id);
         Task<IReadOnlyList<Order>> FindAll();
         Task<Order> FindById(long id);
-
         Task<IReadOnlyList<Order>> FindByUserId(long userId);
     }
 }

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using ZPastel.Core.Repositories;
 using ZPastel.Model;
+using ZPastel.Persistence.API.Repositories;
 using ZPastel.Service.Exceptions;
 
 namespace ZPastel.Service.Validators
