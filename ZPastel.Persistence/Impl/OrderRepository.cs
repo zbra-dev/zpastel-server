@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ZPastel.Model;
 using ZPastel.Persistence.API.Repositories;
@@ -52,6 +53,23 @@ namespace ZPastel.Persistence.Impl
                 .Include(o => o.OrderItems)
                 .AsNoTracking()
                 .SingleOrDefaultAsync(o => o.Id == id);
+        }
+
+        public async Task DeleteOrder(Order order)
+        {
+            dataContext.Remove(order);
+
+            await dataContext.SaveChangesAsync();
+        }
+
+        public async Task<IReadOnlyList<Order>> FindByUserId(long userId)
+        {
+            return await dataContext
+                .Set<Order>()
+                .Where(o => o.CreatedById == userId)
+                .Include(o => o.OrderItems)
+                .AsNoTracking()
+                .ToListAsync();
         }
     }
 }

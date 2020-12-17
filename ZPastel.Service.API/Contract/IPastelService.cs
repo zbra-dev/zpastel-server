@@ -7,5 +7,6 @@ namespace ZPastel.Service.API.Contract
     public interface IPastelService
     {
         Task<IReadOnlyList<Pastel>> FindAll();
+        Task<IReadOnlyList<Pastel>> Filter(PastelFilter pastelFilter);
     }
 }

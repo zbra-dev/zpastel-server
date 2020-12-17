@@ -12,11 +12,16 @@ namespace ZPastel.Service.Impl
     public class OrderService : IOrderService
     {
         private readonly IOrderRepository orderRepository;
+        private readonly IUserRepository userRepository;
         private readonly OrderValidator orderValidator;
 
-        public OrderService(IOrderRepository orderRepository, OrderValidator orderValidator)
+        public OrderService(
+            IOrderRepository orderRepository,
+            IUserRepository userRepository,
+            OrderValidator orderValidator)
         {
             this.orderRepository = orderRepository;
+            this.userRepository = userRepository;
             this.orderValidator = orderValidator;
         }
 
@@ -39,6 +44,18 @@ namespace ZPastel.Service.Impl
             return await orderRepository.CreateOrder(order);
         }
 
+        public async Task DeleteOrder(long id)
+        {
+            var order = await orderRepository.FindById(id);
+
+            if (order == null)
+            {
+                throw new NotFoundException<Order>(id.ToString(), nameof(Order.Id));
+            }
+
+            await orderRepository.DeleteOrder(order);
+        }
+
         public async Task<IReadOnlyList<Order>> FindAll()
         {
             return await orderRepository.FindAll();
@@ -54,6 +71,18 @@ namespace ZPastel.Service.Impl
             }
 
             return order;
+        }
+
+        public async Task<IReadOnlyList<Order>> FindByUserId(long userId)
+        {
+            var user = await userRepository.FindById(userId);
+
+            if (user == null)
+            {
+                throw new NotFoundException<User>(userId.ToString(), nameof(User.Id));
+            }
+
+            return await orderRepository.FindByUserId(userId);
         }
     }
 }

@@ -18,27 +18,48 @@ namespace ZPastel.API.Controllers
         private readonly ILogger<PastelController> logger;
         private readonly IPastelService pastelService;
         private readonly PastelConverter pastelConverter;
+        private readonly PastelFilterConverter pastelFilterConverter;
 
         public PastelController(
             ILogger<PastelController> logger, 
             IPastelService pastelService,
-            PastelConverter pastelConverter)
+            PastelConverter pastelConverter,
+            PastelFilterConverter pastelFilterConverter)
         {
             this.logger = logger;
             this.pastelService = pastelService;
             this.pastelConverter = pastelConverter;
+            this.pastelFilterConverter = pastelFilterConverter;
         }
 
         [HttpGet(Name = nameof(GetPasteis))]
-        [Produces("application/json", Type = typeof(Pastel))]
+        [Produces("application/json", Type = typeof(IReadOnlyList<PastelResource>))]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IReadOnlyCollection<PastelResource>> GetPasteis()
+        public async Task<ActionResult<IReadOnlyCollection<PastelResource>>> GetPasteis()
         {
             var pasteis =  await pastelService.FindAll();
 
-            return pasteis
+            var pasteisResource = pasteis
                 .Select(p => pastelConverter.ConvertToResource(p))
                 .ToList();
+
+            return Ok(pasteisResource);
+        }
+
+        [HttpPost("filter", Name = nameof(FilterPasteis))]
+        [Produces("application/json", Type = typeof(IReadOnlyList<PastelResource>))]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IReadOnlyCollection<PastelResource>>> FilterPasteis(PastelFilterResource pastelFilterResource)
+        {
+            var pastelFilter = pastelFilterConverter.ConvertToModel(pastelFilterResource);
+
+            var pasteis = await pastelService.Filter(pastelFilter);
+
+            var pasteisResource = pasteis
+                .Select(p => pastelConverter.ConvertToResource(p))
+                .ToList();
+
+            return Ok(pasteisResource);
         }
     }
 }
