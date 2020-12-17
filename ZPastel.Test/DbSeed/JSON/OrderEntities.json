@@ -48,16 +48,16 @@
         "Price": 4.50,
         "Quantity": 4,
         "Ingredients": "Carne Moida",
-        "CreatedById": 1,
+        "CreatedById": 2,
         "CreatedOn": "2020-10-13T17:06:53.898Z",
-        "LastModifiedById": 1,
+        "LastModifiedById": 2,
         "LastModifiedOn": "2020-10-13T17:06:53.898Z"
       }
     ],
-    "CreatedByUsername": "Tester",
-    "CreatedById": 1,
+    "CreatedByUsername": "Tester 2",
+    "CreatedById": 2,
     "CreatedOn": "2020-10-13T17:06:53.898Z",
-    "LastModifiedById": 1,
+    "LastModifiedById": 2,
     "LastModifiedOn": "2020-10-13T17:06:53.898Z"
   }
 ]

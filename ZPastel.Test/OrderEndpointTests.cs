@@ -1,5 +1,7 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,17 +12,30 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
 using ZPastel.API.Resources;
+using ZPastel.Model;
+using ZPastel.Persistence;
 using ZPastel.Test.Builders;
 using ZPastel.Tests;
 
 namespace ZPastel.Test
 {
-    public class OrderEndpointTests
+    public class OrderEndpointTests : IDisposable
     {
         private readonly CustomWebApplicationFactory factory;
+        private readonly DataContext dataContext;
+        private readonly IServiceScope serviceScope;
         public OrderEndpointTests()
         {
             factory = new CustomWebApplicationFactory();
+
+            serviceScope = factory.Services.CreateScope();
+
+            dataContext = serviceScope.ServiceProvider.GetRequiredService<DataContext>();
+        }
+
+        public void Dispose()
+        {
+            serviceScope.Dispose();
         }
 
         [Fact]
@@ -51,7 +66,7 @@ namespace ZPastel.Test
             firstOrderItemFromFirstOrder.CreatedById.Should().Be(1);
             firstOrderItemFromFirstOrder.Ingredients.Should().Be("Mussarela, Cheddar, Provolone, Catupiry");
             firstOrderItemFromFirstOrder.LastModifiedById.Should().Be(1);
-            firstOrderItemFromFirstOrder.OrderId.Should().Be(1);
+            firstOrderItemFromFirstOrder.OrderId.Should().Be(firstOrder.Id);
             firstOrderItemFromFirstOrder.PastelId.Should().Be(1);
             firstOrderItemFromFirstOrder.Price.Should().Be(5);
             firstOrderItemFromFirstOrder.Quantity.Should().Be(1);
@@ -61,7 +76,7 @@ namespace ZPastel.Test
             secondOrderItemFromFirstOrder.CreatedById.Should().Be(1);
             secondOrderItemFromFirstOrder.Ingredients.Should().Be("Carne Moida");
             secondOrderItemFromFirstOrder.LastModifiedById.Should().Be(1);
-            secondOrderItemFromFirstOrder.OrderId.Should().Be(1);
+            secondOrderItemFromFirstOrder.OrderId.Should().Be(firstOrder.Id);
             secondOrderItemFromFirstOrder.PastelId.Should().Be(2);
             secondOrderItemFromFirstOrder.Price.Should().Be(4.50m);
             secondOrderItemFromFirstOrder.Quantity.Should().Be(1);
@@ -69,9 +84,9 @@ namespace ZPastel.Test
             var secondOrder = orders.Skip(1).First();
 
             secondOrder.Id.Should().Be(2);
-            secondOrder.CreatedById.Should().Be(1);
-            secondOrder.CreatedByUsername.Should().Be("Tester");
-            secondOrder.LastModifiedById.Should().Be(1);
+            secondOrder.CreatedById.Should().Be(2);
+            secondOrder.CreatedByUsername.Should().Be("Tester 2");
+            secondOrder.LastModifiedById.Should().Be(2);
             secondOrder.TotalPrice.Should().Be(18);
 
             var orderItemsFromSecondOrder = secondOrder.OrderItems;
@@ -79,10 +94,10 @@ namespace ZPastel.Test
 
             var firstOrderItemFromSecondOrder = secondOrder.OrderItems.First();
             firstOrderItemFromSecondOrder.Id.Should().Be(3);
-            firstOrderItemFromSecondOrder.CreatedById.Should().Be(1);
+            firstOrderItemFromSecondOrder.CreatedById.Should().Be(2);
             firstOrderItemFromSecondOrder.Ingredients.Should().Be("Carne Moida");
-            firstOrderItemFromSecondOrder.LastModifiedById.Should().Be(1);
-            firstOrderItemFromSecondOrder.OrderId.Should().Be(1);
+            firstOrderItemFromSecondOrder.LastModifiedById.Should().Be(2);
+            firstOrderItemFromSecondOrder.OrderId.Should().Be(secondOrder.Id);
             firstOrderItemFromSecondOrder.PastelId.Should().Be(2);
             firstOrderItemFromSecondOrder.Price.Should().Be(4.50m);
             firstOrderItemFromSecondOrder.Quantity.Should().Be(4);
@@ -105,9 +120,9 @@ namespace ZPastel.Test
 
             order.Should().NotBeNull();
             order.Id.Should().Be(2);
-            order.CreatedById.Should().Be(1);
-            order.CreatedByUsername.Should().Be("Tester");
-            order.LastModifiedById.Should().Be(1);
+            order.CreatedById.Should().Be(2);
+            order.CreatedByUsername.Should().Be("Tester 2");
+            order.LastModifiedById.Should().Be(2);
             order.TotalPrice.Should().Be(18);
 
             var orderItems = order.OrderItems;
@@ -115,10 +130,10 @@ namespace ZPastel.Test
 
             var firstOrderItemFromSecondOrder = order.OrderItems.First();
             firstOrderItemFromSecondOrder.Id.Should().Be(3);
-            firstOrderItemFromSecondOrder.CreatedById.Should().Be(1);
+            firstOrderItemFromSecondOrder.CreatedById.Should().Be(2);
             firstOrderItemFromSecondOrder.Ingredients.Should().Be("Carne Moida");
-            firstOrderItemFromSecondOrder.LastModifiedById.Should().Be(1);
-            firstOrderItemFromSecondOrder.OrderId.Should().Be(1);
+            firstOrderItemFromSecondOrder.LastModifiedById.Should().Be(2);
+            firstOrderItemFromSecondOrder.OrderId.Should().Be(order.Id);
             firstOrderItemFromSecondOrder.PastelId.Should().Be(2);
             firstOrderItemFromSecondOrder.Price.Should().Be(4.50m);
             firstOrderItemFromSecondOrder.Quantity.Should().Be(4);
@@ -191,7 +206,7 @@ namespace ZPastel.Test
         {
             var body = new OrderResourceBuilder()
                .WithDefaultValues()
-               .WithCreatedById(2)
+               .WithCreatedById(200)
                .Build();
 
             var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
@@ -251,7 +266,7 @@ namespace ZPastel.Test
         {
             var orderItemResource = new OrderItemResource
             {
-                CreatedById = 2,
+                CreatedById = 200,
                 Ingredients = "Quejo",
                 Name = "Pastel de Queijo",
                 PastelId = 1,
@@ -372,7 +387,7 @@ namespace ZPastel.Test
         }
 
         [Theory]
-        [InlineData (-1)]
+        [InlineData(-1)]
         [InlineData(0)]
         public async Task CreateOrder_WithNegativeAndZeroQuantityInOrderItem_ResponseStatusCodeShouldBeBadRequest(int quantity)
         {
@@ -396,6 +411,79 @@ namespace ZPastel.Test
             var client = GetClient();
             var postResponse = await client.PostAsync("api/orders/create", content);
             postResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
+        [Fact]
+        public async Task DeleteOrder_WithOrderItems_ShouldDeleteTheOrderAndAllOrderItems()
+        {
+            var order = dataContext
+                .Set<Order>()
+                .Where(o => o.Id == 2)
+                .Include(o => o.OrderItems)
+                .SingleOrDefault();
+
+            order.Should().NotBeNull();
+            order.OrderItems.Should().NotBeEmpty();
+
+            var client = GetClient();
+            var response = await client.DeleteAsync("api/orders/delete/2");
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            order = dataContext
+                .Set<Order>()
+                .Where(o => o.Id == 2)
+                .SingleOrDefault();
+
+            order.Should().BeNull();
+
+            var orderItems = dataContext
+                .Set<OrderItem>()
+                .Where(o => o.OrderId == 2)
+                .ToList();
+
+            orderItems.Should().BeEmpty();
+        }
+
+        [Fact]
+        public async Task GetOrders_ForUserInTheDatabase_ShouldReturnAllOrdersCreatedByThisUser()
+        {
+            var client = GetClient();
+            var response = await client.GetAsync("api/orders/user/2");
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var ordersContent = await response.Content.ReadAsStringAsync();
+            var orders = Newtonsoft.Json.JsonConvert.DeserializeObject<IReadOnlyCollection<OrderResource>>(ordersContent);
+
+            orders.Count.Should().Be(1);
+
+            var userOrder = orders.First();
+
+            userOrder.Id.Should().Be(2);
+            userOrder.CreatedById.Should().Be(2);
+            userOrder.CreatedByUsername.Should().Be("Tester 2");
+            userOrder.LastModifiedById.Should().Be(2);
+            userOrder.TotalPrice.Should().Be(18);
+
+            var orderItemsFromUserOrder = userOrder.OrderItems;
+            orderItemsFromUserOrder.Count.Should().Be(1);
+
+            var firstOrderItemFromUserOrder = userOrder.OrderItems.First();
+            firstOrderItemFromUserOrder.Id.Should().Be(3);
+            firstOrderItemFromUserOrder.CreatedById.Should().Be(2);
+            firstOrderItemFromUserOrder.Ingredients.Should().Be("Carne Moida");
+            firstOrderItemFromUserOrder.LastModifiedById.Should().Be(2);
+            firstOrderItemFromUserOrder.OrderId.Should().Be(userOrder.Id);
+            firstOrderItemFromUserOrder.PastelId.Should().Be(2);
+            firstOrderItemFromUserOrder.Price.Should().Be(4.50m);
+            firstOrderItemFromUserOrder.Quantity.Should().Be(4);
+        }
+
+        [Fact]
+        public async Task GetOrders_ForUserNotFound_ShouldReturnNotFound()
+        {
+            var client = GetClient();
+            var response = await client.GetAsync("api/orders/user/200");
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
     }
 }

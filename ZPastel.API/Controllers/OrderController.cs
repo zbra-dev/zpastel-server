@@ -31,33 +31,61 @@ namespace ZPastel.API.Controllers
         [HttpPost("create", Name = nameof(CreateOrder))]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<OrderResource> CreateOrder(OrderResource orderResource)
+        public async Task<ActionResult<OrderResource>> CreateOrder(OrderResource orderResource)
         {
             var order = orderConverter.ConvertToModel(orderResource);
 
             var savedOrder = await orderService.CreateOrder(order);
 
-            return orderConverter.ConvertToResource(savedOrder);
+            var savedOrderResource = orderConverter.ConvertToResource(savedOrder);
+
+            return Ok(savedOrderResource);
         }
 
         [HttpGet(Name = nameof(FindAll))]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IReadOnlyList<OrderResource>> FindAll()
+        public async Task<ActionResult<IReadOnlyList<OrderResource>>> FindAll()
         {
             var allOrders = await orderService.FindAll();
 
-            return allOrders.Select(o => orderConverter.ConvertToResource(o)).ToList();
+            var allOrdersResource = allOrders.Select(o => orderConverter.ConvertToResource(o)).ToList();
+
+            return Ok(allOrdersResource);
         }
 
         [HttpGet("{id}", Name = nameof(FindById))]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<OrderResource> FindById(long id)
+        public async Task<ActionResult<OrderResource>> FindById(long id)
         {
             var foundOrder = await orderService.FindById(id);
 
-            return orderConverter.ConvertToResource(foundOrder);
+            var foundOrderResource = orderConverter.ConvertToResource(foundOrder);
+
+            return Ok(foundOrderResource);
+        }
+
+        [HttpDelete("delete/{id}", Name = nameof(DeleteOrder))]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult> DeleteOrder(long id)
+        {
+            await orderService.DeleteOrder(id);
+
+            return Ok();
+        }
+
+        [HttpGet("user/{userId}", Name = nameof(FindByUserId))]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IReadOnlyList<OrderResource>>> FindByUserId(long userId)
+        {
+            var allUserOrders = await orderService.FindByUserId(userId);
+
+            var allUserOrdersResource = allUserOrders.Select(o => orderConverter.ConvertToResource(o)).ToList();
+
+            return Ok(allUserOrdersResource);
         }
     }
 }

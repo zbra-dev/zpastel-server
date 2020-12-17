@@ -4,23 +4,38 @@
     "PasteleiroId": 1,
     "IsAvailable": true,
     "Ingredients": "Mussarela, Cheddar, Provolone, Catupiry",
-    "Name": "4 Queijos",
+    "Name": "Pastel de 4 Queijos",
     "Price": 5.00,
     "CreatedById": 1,
     "CreatedOn": "2020-10-13T17:06:53.898Z",
     "LastModifiedById": 1,
-    "LastModifiedOn": "2020-10-13T17:06:53.898Z"
+    "LastModifiedOn": "2020-10-13T17:06:53.898Z",
+    "FlavorImageUrl": "https://www.fotosdepastel.com/4queijos"
   },
   {
     "Id": 2,
     "PasteleiroId": 1,
     "IsAvailable": true,
     "Ingredients": "Carne Moida",
-    "Name": "Carne",
+    "Name": "Pastel de Carne",
     "Price": 4.50,
     "CreatedById": 1,
     "CreatedOn": "2020-10-13T17:06:53.898Z",
     "LastModifiedById": 1,
-    "LastModifiedOn": "2020-10-13T17:06:53.898Z"
+    "LastModifiedOn": "2020-10-13T17:06:53.898Z",
+    "FlavorImageUrl": "https://www.fotosdepastel.com/carne"
+  },
+  {
+    "Id": 3,
+    "PasteleiroId": 1,
+    "IsAvailable": false,
+    "Ingredients": "Vento",
+    "Name": "Pastel de Vento",
+    "Price": 3.00,
+    "CreatedById": 1,
+    "CreatedOn": "2020-10-13T17:06:53.898Z",
+    "LastModifiedById": 1,
+    "LastModifiedOn": "2020-10-13T17:06:53.898Z",
+    "FlavorImageUrl": "https://www.fotosdepastel.com/vento"
   }
 ]
