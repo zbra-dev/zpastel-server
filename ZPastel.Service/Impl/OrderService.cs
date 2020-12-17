@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ZPastel.Model;
+using ZPastel.Persistence.API.Repositories;
 using ZPastel.Service.API.Contract;
-using ZPastel.Service.API.Repositories;
 using ZPastel.Service.Exceptions;
 using ZPastel.Service.Validators;
 
