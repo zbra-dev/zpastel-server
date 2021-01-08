@@ -1,7 +1,6 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -118,19 +117,19 @@ namespace ZPastel.Test
             var userResource = Newtonsoft.Json.JsonConvert.DeserializeObject<UserResource>(createdUserContent);
 
             userResource.Should().NotBeNull();
-            userResource.CreatedById.Should().Be(1);
+            userResource.CreatedById.Should().Be(user.CreatedById);
             userResource.CreatedOn.Should().BeAfter(DateTime.MinValue);
-            userResource.Email.Should().Be("newemail@test.com");
-            userResource.FirebaseId.Should().Be("user-1");
-            userResource.Id.Should().Be(1);
-            userResource.LastModifiedById.Should().Be(2);
+            userResource.Email.Should().Be(user.Email);
+            userResource.FirebaseId.Should().Be(user.FirebaseId);
+            userResource.Id.Should().Be(user.Id);
+            userResource.LastModifiedById.Should().Be(user.LastModifiedById);
             userResource.LastModifiedOn.Should().Be(now);
-            userResource.Name.Should().Be("New Name");
-            userResource.PhotoUrl.Should().Be("www.newurl.com/photo.jpg");
+            userResource.Name.Should().Be(user.Name);
+            userResource.PhotoUrl.Should().Be(user.PhotoUrl);
         }
 
         [Fact]
-        public async Task SaveUser_WithEmptyName_ShouldThrowArgumentException()
+        public async Task SaveUser_WithEmptyName_ShouldReturnBadRequest()
         {
             var command = new UserResourceBuilder()
                 .WithDefaultValues()
@@ -143,10 +142,13 @@ namespace ZPastel.Test
 
             var createResponse = await client.PostAsync("api/users/save", content);
             createResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+            var createResponseContent = await createResponse.Content.ReadAsStringAsync();
+            createResponseContent.Should().Contain("Username cannot be null or empty");
         }
 
         [Fact]
-        public async Task SaveUser_WithEmptyEmail_ShouldThrowArgumentException()
+        public async Task SaveUser_WithEmptyEmail_ShouldReturnBadRequest()
         {
             var command = new UserResourceBuilder()
                 .WithDefaultValues()
@@ -159,10 +161,13 @@ namespace ZPastel.Test
 
             var createResponse = await client.PostAsync("api/users/save", content);
             createResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+            var createResponseContent = await createResponse.Content.ReadAsStringAsync();
+            createResponseContent.Should().Contain("Email cannot be null or empty");
         }
 
         [Fact]
-        public async Task SaveUser_WithEmptyPhotoUrl_ShouldThrowArgumentException()
+        public async Task SaveUser_WithEmptyPhotoUrl_ShouldReturnBadRequest()
         {
             var command = new UserResourceBuilder()
                 .WithDefaultValues()
@@ -175,6 +180,9 @@ namespace ZPastel.Test
 
             var createResponse = await client.PostAsync("api/users/save", content);
             createResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+            var createResponseContent = await createResponse.Content.ReadAsStringAsync();
+            createResponseContent.Should().Contain("PhotoUrl cannot be null or empty");
         }
     }
 }

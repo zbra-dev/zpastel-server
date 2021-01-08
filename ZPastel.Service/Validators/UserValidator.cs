@@ -14,7 +14,7 @@ namespace ZPastel.Service.Validators
 
             if (string.IsNullOrEmpty(candidate.Name))
             {
-                throw new ArgumentException("UserName cannot be null or empty");
+                throw new ArgumentException("Username cannot be null or empty");
             }
 
             if (string.IsNullOrEmpty(candidate.PhotoUrl))
