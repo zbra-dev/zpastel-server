@@ -13,7 +13,7 @@ namespace ZPastel.Test.DbSeed.DataSeed
         private const string UserDataFilePath = "./DbSeed/JSON/UserEntities.json";
         private const string OrderDataFilePath = "./DbSeed/JSON/OrderEntities.json";
 
-        private readonly IDataContext dataContext;
+        private readonly DataContext dataContext;
 
         public DataSeedService(DataContext dataContext)
         {

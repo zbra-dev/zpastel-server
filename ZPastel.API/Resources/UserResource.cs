@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace ZPastel.Model
+namespace ZPastel.API.Resources
 {
-    public class User
+    public class UserResource
     {
         public long Id { get; set; }
         public string FirebaseId { get; set; }

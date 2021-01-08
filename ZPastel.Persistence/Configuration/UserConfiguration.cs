@@ -12,8 +12,14 @@ namespace ZPastel.Persistence.Configuration
 
             builder.HasKey(u => u.Id);
 
-            builder.Property(u => u.Id).HasColumnName("Id");
+            builder.Property(u => u.FirebaseId).HasColumnName("FirebaseId");
             builder.Property(u => u.Name).HasColumnName("Name");
+            builder.Property(u => u.CreatedById).HasColumnName("CreatedById");
+            builder.Property(u => u.CreatedOn).HasColumnName("CreatedOn");
+            builder.Property(u => u.Email).HasColumnName("Email");
+            builder.Property(u => u.LastModifiedById).HasColumnName("LastModifiedById");
+            builder.Property(u => u.LastModifiedOn).HasColumnName("LastModifiedOn");
+            builder.Property(u => u.PhotoUrl).HasColumnName("PhotoUrl");
         }
     }
 }

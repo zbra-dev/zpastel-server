@@ -1,10 +1,24 @@
 [
   {
     "Id": 1,
-    "Name": "User"
+    "Name": "User",
+    "FirebaseId": "user-1",
+    "CreatedById": 1,
+    "LastModifiedById": 1,
+    "CreatedOn": "2020-10-13T17:06:53.898Z",
+    "LastModifiedOn": "2020-10-13T17:06:53.898Z",
+    "Email": "user@test.com",
+    "PhotoUrl": "www.photourl.com/user.jpg"
   },
   {
     "Id": 2,
-    "Name": "Tester"
+    "Name": "Tester",
+    "FirebaseId": "user-2",
+    "CreatedById": 2,
+    "LastModifiedById": 2,
+    "CreatedOn": "2020-10-13T17:06:53.898Z",
+    "LastModifiedOn": "2020-10-13T17:06:53.898Z",
+    "Email": "tester@test.com",
+    "PhotoUrl": "www.photourl.com/tester.jpg"
   }
 ]

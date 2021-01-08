@@ -24,7 +24,7 @@ namespace ZPastel.Persistence.Configuration
             builder.Property(p => p.FlavorImageUrl).HasColumnName("FlavorImageUrl");
 
             builder.HasOne(p => p.Pasteleiro).WithMany().HasForeignKey(p => p.PasteleiroId).OnDelete(DeleteBehavior.NoAction);
-            builder.HasOne(o => o.User).WithMany().HasForeignKey(p => p.CreatedById).OnDelete(DeleteBehavior.NoAction);
+            builder.HasOne(p => p.User).WithMany().HasForeignKey(p => p.CreatedById).OnDelete(DeleteBehavior.NoAction);
         }
     }
 }
